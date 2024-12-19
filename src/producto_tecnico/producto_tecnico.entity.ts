@@ -1,7 +1,8 @@
-import { Column, Entity, PrimaryGeneratedColumn } from "typeorm";
+import { CatalogoEntity } from "src/catalogo/catalogo.entity";
+import { Column, Entity, JoinColumn, ManyToOne, PrimaryGeneratedColumn } from "typeorm";
 
 @Entity({ name: 'producto_tecnico' })
-export class ProductoTecnicoEntity{
+export class ProductoTecnicoEntity {
 
     @PrimaryGeneratedColumn()
     idProducto: number;
@@ -27,4 +28,11 @@ export class ProductoTecnicoEntity{
     @Column({ nullable: false, type: 'character varying', length: '100' })
     capacidadTecnica: string;
 
+    @ManyToOne(() => CatalogoEntity, (catalogo) => catalogo.catalogoEstadoProducto, { nullable: false })
+    @JoinColumn({ name: 'estadoEquipo' })
+    estadoEquipo: CatalogoEntity;
+
+    @ManyToOne(() => CatalogoEntity, (catalogo) => catalogo.catalogoTipoProducto, { nullable: false })
+    @JoinColumn({ name: 'tipoProducto' })
+    tipoProducto: CatalogoEntity;
 }

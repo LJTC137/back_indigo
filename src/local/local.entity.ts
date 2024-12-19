@@ -1,12 +1,14 @@
-import { Column, Entity, PrimaryGeneratedColumn } from "typeorm";
+import { AlquilerEntity } from "src/alquiler/alquiler.entity";
+import { CatalogoEntity } from "src/catalogo/catalogo.entity";
+import { Column, Entity, JoinColumn, ManyToOne, OneToMany, PrimaryGeneratedColumn } from "typeorm";
 
 @Entity({ name: 'local' })
-export class LocalEntity{
+export class LocalEntity {
 
     @PrimaryGeneratedColumn()
     idLocal: number;
 
-    @Column({ nullable: false, type: 'character varying', length: '50'  })
+    @Column({ nullable: false, type: 'character varying', length: '50' })
     direccion: string;
 
     @Column({ nullable: false, type: 'character varying', length: '20' })
@@ -33,4 +35,15 @@ export class LocalEntity{
     @Column({ nullable: false, type: 'integer' })
     aforo: number;
 
+    @ManyToOne(() => CatalogoEntity, (catalogo) => catalogo.catalogoEstadoLocal, { nullable: false })
+    @JoinColumn()
+    estadoDisponibilidad: CatalogoEntity;
+
+    @ManyToOne(() => CatalogoEntity, (catalogo) => catalogo.catalogoTipoLocal, { nullable: false })
+    @JoinColumn()
+    tipoLocal: CatalogoEntity;
+
+    //======= Foreign key
+    @OneToMany(() => AlquilerEntity, (alquiler) => alquiler.local)
+    localAlquiler: AlquilerEntity[];
 }

@@ -1,4 +1,5 @@
-import { Column, Entity, PrimaryColumn } from 'typeorm';
+import { AlquilerEntity } from 'src/alquiler/alquiler.entity';
+import { Column, Entity, OneToMany, PrimaryColumn } from 'typeorm';
 
 @Entity({ name: 'asesor' })
 export class AsesorEntity {
@@ -25,4 +26,8 @@ export class AsesorEntity {
 
     @Column({ nullable: false, type: 'character varying', length: '75' })
     especialidad: string;
+
+    //======= Foreign key
+    @OneToMany(() => AlquilerEntity, (alquiler) => alquiler.asesor)
+    asesorAlquiler: AlquilerEntity[];
 }

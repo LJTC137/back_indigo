@@ -22,6 +22,7 @@ import { ProductoTecnicoModule } from './producto_tecnico/producto_tecnico.modul
 import { ImagesModule } from './images/images.module';
 import { AlquilerModule } from './alquiler/alquiler.module';
 import { ColorModule } from './color/color.module';
+import { AlquilerXEquipoModule } from './alquiler_x_equipo/alquiler_x_equipo.module';
 
 @Module({
   imports: [
@@ -48,21 +49,22 @@ import { ColorModule } from './color/color.module';
       }),
       inject: [ConfigService],
     }),
-    UsuarioModule,
-    TipoUsuarioModule,
-    CatalogoModule,
-    EquipoServicioModule,
-    MontajeModule,
-    CateringModule,
-    AsesorModule,
-    LocalModule,
     AdornoModule,
-    ProductoTecnicoModule,
-    ImagesModule,
     AlquilerModule,
+    AlquilerXEquipoModule,
+    AsesorModule,
+    CatalogoModule,
+    CateringModule,
     ColorModule,
+    EquipoServicioModule,
+    ImagesModule,
+    LocalModule,
+    MontajeModule,
+    ProductoTecnicoModule,
+    TipoUsuarioModule,
+    UsuarioModule,
   ],
   controllers: [],
   providers: [],
 })
-export class AppModule {}
+export class AppModule { }

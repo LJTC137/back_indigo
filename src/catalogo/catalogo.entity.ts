@@ -1,16 +1,66 @@
-import { Column, Entity, PrimaryGeneratedColumn } from 'typeorm';
+import { AdornoEntity } from 'src/adorno/adorno.entity';
+import { AlquilerEntity } from 'src/alquiler/alquiler.entity';
+import { CateringEntity } from 'src/catering/catering.entity';
+import { EquipoServicioEntity } from 'src/equipo_servicio/equipo_servicio.entity';
+import { LocalEntity } from 'src/local/local.entity';
+import { MontajeEntity } from 'src/montaje/montaje.entity';
+import { ProductoTecnicoEntity } from 'src/producto_tecnico/producto_tecnico.entity';
+import { Column, Entity, OneToMany, PrimaryGeneratedColumn } from 'typeorm';
 
 @Entity({ name: 'catalogo' })
 export class CatalogoEntity {
   @PrimaryGeneratedColumn()
   idCatalogo: number;
 
-  @Column({ nullable: false, type: 'character varying', length:'70'})
+  @Column({ nullable: false, type: 'character varying', length: '70' })
   nombreCatalogo: string;
 
-  @Column({ nullable: false, type: 'character varying', length:'70'})
+  @Column({ nullable: false, type: 'character varying', length: '70' })
   valorCatalogo: string;
 
-  @Column({ default: true, nullable: false, type: 'boolean'})
+  @Column({ default: true, nullable: false, type: 'boolean' })
   estado: boolean;
+
+  //==========Adornos
+  @OneToMany(() => AdornoEntity, (adorno) => adorno.tipoAdorno)
+  catalogoTipoAdorno: AdornoEntity[];
+
+  //==========Alquiler
+  @OneToMany(() => AlquilerEntity, (alquiler) => alquiler.estadoAlquiler)
+  catalogoEstadoAlquiler: AlquilerEntity[];
+
+  @OneToMany(() => AlquilerEntity, (alquiler) => alquiler.tipoEvento)
+  catalogoTipoAlquiler: AlquilerEntity[];
+
+  //==========Catering
+  @OneToMany(() => CateringEntity, (catering) => catering.tipoCatering)
+  catalogoTipoCatering: CateringEntity[];
+
+  //==========Equipo servicio
+  @OneToMany(() => EquipoServicioEntity, (equipoServicio) => equipoServicio.tipoContratacion)
+  catalogoTipoContratacion: EquipoServicioEntity[];
+
+  @OneToMany(() => EquipoServicioEntity, (equipoServicio) => equipoServicio.tipoEquipo)
+  catalogoTipoEquipo: EquipoServicioEntity[];
+
+  //==========Local
+  @OneToMany(() => LocalEntity, (local) => local.estadoDisponibilidad)
+  catalogoEstadoLocal: LocalEntity[];
+
+  @OneToMany(() => LocalEntity, (local) => local.tipoLocal)
+  catalogoTipoLocal: LocalEntity[]
+
+  //==========Montaje
+  @OneToMany(() => MontajeEntity, (montaje) => montaje.tipoCobro)
+  catalogoTipoCobro: MontajeEntity[];
+  
+  @OneToMany(() => MontajeEntity, (montaje) => montaje.tipoMontaje)
+  catalogoTipoMontaje: MontajeEntity[];
+
+  //==========Productos Tecnicos
+  @OneToMany(() => ProductoTecnicoEntity, (productoTecnico) => productoTecnico.estadoEquipo)
+  catalogoEstadoProducto: ProductoTecnicoEntity[];
+
+  @OneToMany(() => ProductoTecnicoEntity, (productoTecnico) => productoTecnico.tipoProducto)
+  catalogoTipoProducto: ProductoTecnicoEntity[];
 }

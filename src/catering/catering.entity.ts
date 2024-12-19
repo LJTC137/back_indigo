@@ -1,4 +1,5 @@
-import { Column, Entity, PrimaryGeneratedColumn } from "typeorm";
+import { CatalogoEntity } from "src/catalogo/catalogo.entity";
+import { Column, Entity, JoinColumn, ManyToOne, PrimaryGeneratedColumn } from "typeorm";
 
 @Entity({ name: 'catering' })
 export class CateringEntity{
@@ -18,4 +19,7 @@ export class CateringEntity{
     @Column({ nullable: false, type: 'boolean', default: true })
     estado: boolean;
 
+    @ManyToOne(() => CatalogoEntity, (catalogo) => catalogo.catalogoTipoCatering, { nullable: false })
+    @JoinColumn({ name: 'tipoCatering' })
+    tipoCatering: CatalogoEntity;
 }
