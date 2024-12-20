@@ -40,9 +40,9 @@ export class UsuarioEntity {
   tipo_usuario: TipoUsuarioEntity[];
 
   //============== Operaciones
-  @BeforeInsert()
-  async hashPasword() {
-    if (!this.contrasenia) return;
-    this.contrasenia = await hash(this.contrasenia, 12);
-  }
+  // @BeforeInsert()
+  // async hashPasword() {
+  //   if (!this.contrasenia) return;
+  //   this.contrasenia = await hash(this.contrasenia, 12);
+  // }
 }

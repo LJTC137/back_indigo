@@ -1,5 +1,6 @@
+import { AlquilerEntity } from "src/alquiler/alquiler.entity";
 import { CatalogoEntity } from "src/catalogo/catalogo.entity";
-import { Column, Entity, JoinColumn, ManyToOne, PrimaryGeneratedColumn } from "typeorm";
+import { Column, Entity, JoinColumn, ManyToMany, ManyToOne, PrimaryGeneratedColumn } from "typeorm";
 
 @Entity({ name: 'producto_tecnico' })
 export class ProductoTecnicoEntity {
@@ -28,6 +29,12 @@ export class ProductoTecnicoEntity {
     @Column({ nullable: false, type: 'character varying', length: '100' })
     capacidadTecnica: string;
 
+    //============== Foreign key
+    //======= Alquiler
+    @ManyToMany(() => AlquilerEntity, (alquiler) => alquiler.alquilerProducto)
+    productoAlquiler: AlquilerEntity[];
+
+    //======= Catalogo
     @ManyToOne(() => CatalogoEntity, (catalogo) => catalogo.catalogoEstadoProducto, { nullable: false })
     @JoinColumn({ name: 'estadoEquipo' })
     estadoEquipo: CatalogoEntity;

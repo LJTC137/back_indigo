@@ -1,10 +1,13 @@
+import { AdornoXAlquilerEntity } from 'src/adorno_x_alquiler/adorno_x_alquiler.entity';
 import { AlquilerXEquipoEntity } from 'src/alquiler_x_equipo/alquiler_x_equipo.entity';
 import { AsesorEntity } from 'src/asesor/asesor.entity';
 import { CatalogoEntity } from 'src/catalogo/catalogo.entity';
+import { CateringEntity } from 'src/catering/catering.entity';
 import { LocalEntity } from 'src/local/local.entity';
 import { MontajeEntity } from 'src/montaje/montaje.entity';
+import { ProductoTecnicoEntity } from 'src/producto_tecnico/producto_tecnico.entity';
 import { UsuarioEntity } from 'src/usuario/usuario.entity';
-import { Column, Entity, JoinColumn, ManyToOne, OneToMany, PrimaryGeneratedColumn, Timestamp } from 'typeorm';
+import { Column, Entity, JoinColumn, JoinTable, ManyToMany, ManyToOne, OneToMany, PrimaryGeneratedColumn, Timestamp } from 'typeorm';
 
 @Entity({ name: 'alquiler' })
 export class AlquilerEntity {
@@ -47,6 +50,11 @@ export class AlquilerEntity {
   @Column({ nullable: false, type: 'boolean', default: true })
   estado: boolean;
 
+  //==================== Foreign keys
+  //========== Adorno
+  @OneToMany(() => AdornoXAlquilerEntity, (alquilerAdorno) => alquilerAdorno.alquiler)
+  alquilerAdorno: AdornoXAlquilerEntity[];
+
   //========== Asesor
   @ManyToOne(() => AsesorEntity, (asesor) => asesor.asesorAlquiler, { nullable: false })
   @JoinColumn({ name: 'idAsesor' })
@@ -61,10 +69,20 @@ export class AlquilerEntity {
   @JoinColumn({ name: 'tipoEvento' })
   tipoEvento: CatalogoEntity;
 
+  //========== Catering
+  @ManyToMany(() => CateringEntity, (catering) => catering.cateringAlquiler, {
+    eager: true,
+  })
+  @JoinTable({
+    name: 'alquiler_catering',
+    joinColumn: { name: 'idAlquiler' },
+    inverseJoinColumn: { name: 'idCatering' },
+  })
+  alquilerCatering: CateringEntity[];
+
   //========== Equipo servicio
   @OneToMany(() => AlquilerXEquipoEntity, (alquilerEquipo) => alquilerEquipo.alquiler)
-  alquilerEquipo: AlquilerXEquipoEntity[]; 
-
+  alquilerEquipo: AlquilerXEquipoEntity[];
 
   //========== Local
   @ManyToOne(() => LocalEntity, (local) => local.localAlquiler, { nullable: false })
@@ -76,8 +94,19 @@ export class AlquilerEntity {
   @JoinColumn({ name: 'idMontaje' })
   montaje: MontajeEntity;
 
-   //========== usuario
-   @ManyToOne(() => UsuarioEntity, (usuario) => usuario.usuarioAlquiler, { nullable: false })
-   @JoinColumn({ name: 'idUsuario' })
-   usuario: UsuarioEntity;
+  //========== Productos tecnicos
+  @ManyToMany(() => ProductoTecnicoEntity, (producto) => producto.productoAlquiler, {
+    eager: true,
+  })
+  @JoinTable({
+    name: 'alquiler_producto',
+    joinColumn: { name: 'idAlquiler' },
+    inverseJoinColumn: { name: 'idProducto' },
+  })
+  alquilerProducto: ProductoTecnicoEntity[];
+
+  //========== usuario
+  @ManyToOne(() => UsuarioEntity, (usuario) => usuario.usuarioAlquiler, { nullable: false })
+  @JoinColumn({ name: 'idUsuario' })
+  usuario: UsuarioEntity;
 }

@@ -23,6 +23,7 @@ import { ImagesModule } from './images/images.module';
 import { AlquilerModule } from './alquiler/alquiler.module';
 import { ColorModule } from './color/color.module';
 import { AlquilerXEquipoModule } from './alquiler_x_equipo/alquiler_x_equipo.module';
+import { AdornoXAlquilerModule } from './adorno_x_alquiler/adorno_x_alquiler.module';
 
 @Module({
   imports: [
@@ -50,6 +51,7 @@ import { AlquilerXEquipoModule } from './alquiler_x_equipo/alquiler_x_equipo.mod
       inject: [ConfigService],
     }),
     AdornoModule,
+    AdornoXAlquilerModule,
     AlquilerModule,
     AlquilerXEquipoModule,
     AsesorModule,
