@@ -14,8 +14,8 @@ import {
 
     @IsNotEmpty({ message: 'El campo identificación no puede estar vacío' })
     @IsString({ message: 'El campo identificación debe ser una cadena de texto' })
-    @MaxLength(13, { message: 'La cedula debe tener al menos 13 caracteres' })
-    @MinLength(13, { message: 'La cedula debe tener al menos 13 caracteres' })
+    @MaxLength(13, { message: 'La identificación tiene un máximo de 13 caracteres' })
+    @MinLength(10, { message: 'La identificación tiene un mínimo de 10 caracteres' })
     identificacion: string;
 
     @IsNotEmpty({ message: 'El campo correo no puede estar vacío' })
@@ -26,8 +26,8 @@ import {
     @MinLength(6, { message: 'La contraseña debe tener al menos 6 caracteres' })
     contrasenia: string;
   
-    @IsBoolean({ message: 'El campo estado debe ser un valor booleano' })
+    @IsBoolean({ message: 'El campo estado debe ser un valor de si o no' })
     estado: boolean;
-  
-    tipo_usuario: number;
+
+    tipo_usuario;
   }

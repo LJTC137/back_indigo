@@ -1,4 +1,4 @@
-import { hash } from "crypto";
+import { hash } from "bcryptjs";
 import { AlquilerEntity } from "src/alquiler/alquiler.entity";
 import { TipoUsuarioEntity } from "src/tipo_usuario/tipo_usuario.entity";
 import { BeforeInsert, Column, Entity, JoinTable, ManyToMany, OneToMany, PrimaryGeneratedColumn } from "typeorm";

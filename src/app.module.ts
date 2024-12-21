@@ -23,6 +23,7 @@ import { ImagesModule } from './images/images.module';
 import { AlquilerModule } from './alquiler/alquiler.module';
 import { ColorModule } from './color/color.module';
 import { AlquilerXEquipoModule } from './alquiler_x_equipo/alquiler_x_equipo.module';
+import { AuthModule } from './auth/auth.module';
 
 @Module({
   imports: [
@@ -41,8 +42,8 @@ import { AlquilerXEquipoModule } from './alquiler_x_equipo/alquiler_x_equipo.mod
         password: configService.get<string>(DB_PASSWORD),
         database: configService.get<string>(DB_DATABASE),
         entities: ['dist/**/*.entity{.ts,.js}'],
-        autoLoadEntities: false,
-        synchronize: true,
+        autoLoadEntities: true,
+        synchronize: false,
         dropSchema: false,
         retryDelay: 3000,
         retryAttempts: 10,
@@ -63,6 +64,7 @@ import { AlquilerXEquipoModule } from './alquiler_x_equipo/alquiler_x_equipo.mod
     ProductoTecnicoModule,
     TipoUsuarioModule,
     UsuarioModule,
+    AuthModule,
   ],
   controllers: [],
   providers: [],
