@@ -1,7 +1,8 @@
-import { Column, Entity, PrimaryGeneratedColumn } from "typeorm";
+import { AdornoEntity } from "src/adorno/adorno.entity";
+import { Column, Entity, ManyToMany, PrimaryGeneratedColumn } from "typeorm";
 
 @Entity({ name: 'color' })
-export class ColorEntity{
+export class ColorEntity {
 
     @PrimaryGeneratedColumn()
     idColor: number;
@@ -15,4 +16,8 @@ export class ColorEntity{
     @Column({ nullable: false, type: 'boolean', default: true })
     estado: boolean
 
+    //============== Foreign key
+    //======= Adorno
+    @ManyToMany(() => AdornoEntity, (adorno) => adorno.adornoColor)
+    colorAdorno: AdornoEntity[];
 }

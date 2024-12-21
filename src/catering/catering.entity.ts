@@ -1,5 +1,6 @@
+import { AlquilerEntity } from "src/alquiler/alquiler.entity";
 import { CatalogoEntity } from "src/catalogo/catalogo.entity";
-import { Column, Entity, JoinColumn, ManyToOne, PrimaryGeneratedColumn } from "typeorm";
+import { Column, Entity, JoinColumn, ManyToMany, ManyToOne, PrimaryGeneratedColumn } from "typeorm";
 
 @Entity({ name: 'catering' })
 export class CateringEntity{
@@ -19,6 +20,12 @@ export class CateringEntity{
     @Column({ nullable: false, type: 'boolean', default: true })
     estado: boolean;
 
+    //============== Foreign key
+    //======= Alquiler
+    @ManyToMany(() => AlquilerEntity, (alquiler) => alquiler.alquilerCatering)
+    cateringAlquiler: AlquilerEntity[];
+
+    //======= Catalogo
     @ManyToOne(() => CatalogoEntity, (catalogo) => catalogo.catalogoTipoCatering, { nullable: false })
     @JoinColumn({ name: 'tipoCatering' })
     tipoCatering: CatalogoEntity;
