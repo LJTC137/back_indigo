@@ -19,4 +19,7 @@ export class AdornoXAlquilerEntity{
     @Column({ nullable: false, type: 'character varying', length: '20' })
     color: string;
 
+    @Column({ nullable: false, type: 'integer' })
+    cantidadAdornos: number;
+
 }

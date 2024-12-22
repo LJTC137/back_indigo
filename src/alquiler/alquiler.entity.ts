@@ -12,7 +12,7 @@ import { Column, Entity, JoinColumn, JoinTable, ManyToMany, ManyToOne, OneToMany
 @Entity({ name: 'alquiler' })
 export class AlquilerEntity {
   @PrimaryGeneratedColumn()
-  idAsesor: number;
+  idAlquiler: number;
 
   @Column({ nullable: false, type: 'date' })
   fechaEvento: Date;
