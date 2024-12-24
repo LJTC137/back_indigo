@@ -1,9 +1,9 @@
 import { IsNotEmpty, IsNumber, IsString, MaxLength } from "class-validator";
 
 export class CreateAdornoXAlquilerDto {
-    adorno;
+    adornoId;
 
-    alquiler;
+    alquilerId;
 
     @IsNotEmpty({ message: 'El campo color no puede estar vacio' })
     @IsString({ message: 'El campo de color solo puede ser una cadena de texto' })

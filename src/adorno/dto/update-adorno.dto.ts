@@ -40,5 +40,6 @@ export class UpdateAdornoDto {
   @IsNumber({ maxDecimalPlaces: 0, allowNaN: false })
   cantidad?: number;
 
-  tipoAdorno?;
+  tipoAdornoId?;
+  adornoColorIds?;
 }

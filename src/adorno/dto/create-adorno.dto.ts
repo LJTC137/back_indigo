@@ -27,5 +27,6 @@ export class CreateAdornoDto {
   @IsNumber({ maxDecimalPlaces: 0, allowNaN: false })
   cantidad: number;
 
-  tipoAdorno;
+  tipoAdornoId;
+  adornoColorIds;
 }

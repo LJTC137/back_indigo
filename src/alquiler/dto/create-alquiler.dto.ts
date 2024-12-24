@@ -36,10 +36,10 @@ export class CreateAlquilerDto{
     @IsBoolean({ message: 'El campo estado solo puede ser un valor de si o no' })
     estado: boolean;
     
-    asesor;
-    estadoAlquiler;
-    tipoEvento;
-    local;
-    montaje;
-    usuario;
+    asesorId;
+    estadoAlquilerId;
+    tipoEventoId;
+    localId;
+    montajeId;
+    usuarioId;
 }
