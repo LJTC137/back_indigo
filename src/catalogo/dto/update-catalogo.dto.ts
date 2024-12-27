@@ -1,6 +1,6 @@
 import { IsBoolean, IsNotEmpty, IsString, MaxLength } from 'class-validator';
 
-export class CreateCatalogoDto {
+export class UpdateCatalogoDto {
   idCatalogo: number;
 
   @IsNotEmpty({ message: 'El campo nombre de catalogo no puede estar vacío' })
