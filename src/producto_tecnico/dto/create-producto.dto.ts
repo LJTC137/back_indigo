@@ -47,6 +47,9 @@ export class CreateProductoTecnicoDto {
   })
   capacidadTecnica: string;
 
+  @IsNotEmpty({ message: 'El producto técnico necesita un estado del equipo registrado' })
   estadoEquipoId;
+  
+  @IsNotEmpty({ message: 'El producto técnico necesita un tipo de producto técnico registrado' })
   tipoProductoId;
 }

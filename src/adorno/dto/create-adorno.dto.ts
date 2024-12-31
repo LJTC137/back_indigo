@@ -27,6 +27,9 @@ export class CreateAdornoDto {
   @IsNumber({ maxDecimalPlaces: 0, allowNaN: false })
   cantidad: number;
 
+  @IsNotEmpty({ message: 'El tipo de adorno es obligatorio' })
   tipoAdornoId;
+
+  @IsNotEmpty({ message: 'El listado de colores de los adornos son obligatorio' })
   adornoColorIds;
 }

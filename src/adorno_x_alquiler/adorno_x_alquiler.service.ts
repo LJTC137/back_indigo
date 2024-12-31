@@ -8,36 +8,85 @@ import { UpdateAdornoXAlquilerDto } from './dto/update-adorno-alquiler.dto';
 
 @Injectable()
 export class AdornoXAlquilerService {
+  constructor(
+    @InjectRepository(AdornoXAlquilerEntity)
+    private readonly adornoXAlquilerRepository: Repository<AdornoXAlquilerEntity>,
+  ) {}
 
-    constructor(@InjectRepository(AdornoXAlquilerEntity) private readonly adornoXAlquilerRepository: Repository<AdornoXAlquilerEntity>) { }
-
-    // ======= Listar todos los adonorsXAlquiler
-    async getAdornoXAlquilerList() {
-        return await this.adornoXAlquilerRepository.find();
+  // ======= Listar todos los adornosXAlquiler
+  async getList() {
+    try {
+      return await this.adornoXAlquilerRepository.find();
+    } catch (error) {
+      return new MessageDto(error);
     }
+  }
 
-    // ======= Listar AdornoXAlquiler por id alquiler
-    async getByAlquilerId(idAlquiler: number) {
-        const adornoXAlquiler = await this.adornoXAlquilerRepository.find({ where: { alquiler: { idAlquiler: idAlquiler } } })
-        if (!adornoXAlquiler) {
-            throw new BadRequestException(new MessageDto('No sea a encontrado el adorno'))
-        }
-        return adornoXAlquiler;
+  // ======= Listar AdornoXAlquiler por id alquiler
+  async getByAlquilerId(idAlquiler: number) {
+    try {
+      const adornoXAlquiler = await this.adornoXAlquilerRepository.find({
+        where: { alquiler: { idAlquiler: idAlquiler } },
+      });
+      if (!adornoXAlquiler) {
+        throw new BadRequestException(
+          new MessageDto('No sea a encontrado el adorno'),
+        );
+      }
+      return adornoXAlquiler;
+    } catch (error) {
+      return new MessageDto(error);
     }
+  }
 
-    // ======== Crear AdornoXAlquiler
-    async createAdornoXAlquiler(createAdornoXAlquilerDto: CreateAdornoXAlquilerDto) {
-        const adornoXAlquiler = this.adornoXAlquilerRepository.create(createAdornoXAlquilerDto);
-        return await this.adornoXAlquilerRepository.save(adornoXAlquiler);
+  // ======== Crear AdornoXAlquiler
+  async create(
+    createAdornoXAlquilerDto: CreateAdornoXAlquilerDto,
+  ) {
+    try {
+      const adornoXAlquiler = this.adornoXAlquilerRepository.create(
+        createAdornoXAlquilerDto,
+      );
+      return await this.adornoXAlquilerRepository.save(adornoXAlquiler);
+    } catch (error) {
+      return new MessageDto(error);
     }
+  }
 
-    // ======== Actualizar adornoXAlquiler
-    async updateAdornoXAlquiler(idAdornoXAlquiler: number, updateAdornoXAlquiler: UpdateAdornoXAlquilerDto) {
-        const adornoXAlquiler = await this.adornoXAlquilerRepository.find({ where: { idAdornoXAlquiler } })
-        if (!adornoXAlquiler) {
-            throw new BadRequestException(new MessageDto('Adorno no encontrado'))
-        };
-        await this.adornoXAlquilerRepository.update({ idAdornoXAlquiler }, updateAdornoXAlquiler);
-        return new MessageDto('Adorno actualizado');
+  // ======== Eliminar adornoXAlquiler
+  async delete(idAdornoXAlquiler: number) {
+    try {
+      const adornoXAlquiler = await this.adornoXAlquilerRepository.find({
+        where: { idAdornoXAlquiler: idAdornoXAlquiler },
+      });
+      if (!adornoXAlquiler) {
+        throw new BadRequestException(new MessageDto('Adorno no encontrado'));
+      }
+      await this.adornoXAlquilerRepository.delete({ idAdornoXAlquiler });
+    } catch (error) {
+      return new MessageDto(error);
     }
+  }
+
+  // ======== Actualizar adornoXAlquiler
+  async update(
+    idAdornoXAlquiler: number,
+    updateAdornoXAlquiler: UpdateAdornoXAlquilerDto,
+  ) {
+    try {
+      const adornoXAlquiler = await this.adornoXAlquilerRepository.find({
+        where: { idAdornoXAlquiler: idAdornoXAlquiler },
+      });
+      if (!adornoXAlquiler) {
+        throw new BadRequestException(new MessageDto('Adorno no encontrado'));
+      }
+      await this.adornoXAlquilerRepository.update(
+        { idAdornoXAlquiler },
+        updateAdornoXAlquiler,
+      );
+      return new MessageDto('Adorno actualizado');
+    } catch (error) {
+      return new MessageDto(error);
+    }
+  }
 }

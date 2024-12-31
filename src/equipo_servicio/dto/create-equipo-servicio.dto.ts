@@ -34,7 +34,10 @@ import {
     @IsBoolean({ message: 'El campo disponibilidad solo puede ser un valor de verdadero o falso' })
     esDisponible: boolean;
 
+    @IsNotEmpty({ message: 'El equipo de servicio necesita un tipo de contratación registrado' })
     tipoContratacionId;
+
+    @IsNotEmpty({ message: 'El equipo de servicio necesita un tipo de equipo de servicio registrado' })
     tipoEquipoId;
   }
   

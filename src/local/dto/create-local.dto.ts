@@ -51,7 +51,10 @@ import {
     @IsPositive({ message: 'El campo aforo debe ser un valor positivo' })
     aforo: number;
 
+    @IsNotEmpty({ message: 'El local necesita un estado de disponibilidad registrado' })
     estadoDisponibilidadId;
+    
+    @IsNotEmpty({ message: 'El local necesita un tipo de local registrado' })
     tipoLocalId;
   }
   

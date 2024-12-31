@@ -36,10 +36,21 @@ export class CreateAlquilerDto{
     @IsBoolean({ message: 'El campo estado solo puede ser un valor de si o no' })
     estado: boolean;
     
+    @IsNotEmpty({ message: 'El alquiler necesita un asesor registrado' })
     asesorId;
+
+    @IsNotEmpty({ message: 'El alquiler necesita un estado de alquiler registrado' })
     estadoAlquilerId;
+
+    @IsNotEmpty({ message: 'El alquiler necesita un tipo de evento registrado' })
     tipoEventoId;
+
+    @IsNotEmpty({ message: 'El alquiler necesita un local registrado' })
     localId;
+
+    @IsNotEmpty({ message: 'El alquiler necesita un tipo de montaje registrado' })
     montajeId;
+
+    @IsNotEmpty({ message: 'El alquiler necesita el id del usuario conectado registrado' })
     usuarioId;
 }

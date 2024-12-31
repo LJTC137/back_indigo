@@ -49,7 +49,10 @@ import {
     @IsPositive({ message: 'El campo depósito reembolsable debe ser un valor positivo' })
     depositoReembolsable: number;
 
+    @IsNotEmpty({ message: 'El montaje necesita un tipo de cobro registrado' })
     tipoCobroId;
+    
+    @IsNotEmpty({ message: 'El montaje necesita un tipo de montaje registrado' })
     tipoMontajeId;
 }
   

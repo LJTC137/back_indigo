@@ -1,6 +1,4 @@
-import { IsNotEmpty } from "class-validator";
-
-export class AlquilerXEquipoDto{
+export class UpdateAlquilerXEquipoDto{
     idAlquilerXEquipo: number;
     alquilerId?;
     equipoId?;

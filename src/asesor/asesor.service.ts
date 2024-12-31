@@ -8,48 +8,78 @@ import { UpdateAsesorDto } from 'src/asesor/dto/update-asesor.dto';
 
 @Injectable()
 export class AsesorService {
+  constructor(
+    @InjectRepository(AsesorEntity)
+    private readonly asesorRepository: Repository<AsesorEntity>,
+  ) {}
 
-    constructor(@InjectRepository(AsesorEntity) private readonly asesorRepository: Repository<AsesorEntity>) { }
-
-    // ======= Listar todos los asesores
-    async getAsesoresList() {
-        return await this.asesorRepository.find();
+  // ======= Listar todos los asesores
+  async getList() {
+    try {
+      return await this.asesorRepository.find({ where: { estado: true } });
+    } catch (error) {
+      return new MessageDto(error);
     }
+  }
 
-    // ======= Listar asesor por id
-    async getAsesorById(idAsesor: number) {
-        const asesor = await this.asesorRepository.find({ where: { idAsesor } })
-        if (!asesor) {
-            throw new BadRequestException(new MessageDto('No sea a encontrado el asesor'))
-        }
-        return asesor;
+  // ======= Listar asesor por id
+  async getById(idAsesor: number) {
+    try {
+      const asesor = await this.asesorRepository.find({
+        where: { idAsesor: idAsesor, estado: true },
+      });
+      if (!asesor) {
+        throw new BadRequestException(
+          new MessageDto('No sea a encontrado el asesor'),
+        );
+      }
+      return asesor;
+    } catch (error) {
+      return new MessageDto(error);
     }
+  }
 
-    // ======== Crear asesor
-    async createAsesor(createAsesorDto: CreateAsesorDto) {
-        const asesor = this.asesorRepository.create(createAsesorDto);
-        await this.asesorRepository.save(asesor);
-        return new MessageDto('Asesor registrado');
+  // ======== Crear asesor
+  async create(createAsesorDto: CreateAsesorDto) {
+    try {
+      const asesor = this.asesorRepository.create(createAsesorDto);
+      await this.asesorRepository.save(asesor);
+      return new MessageDto('Asesor registrado');
+    } catch (error) {
+      return new MessageDto(error);
     }
+  }
 
-    // ======== Eliminar asesor
-    async deleteAsesor(idAsesor: number, updateAsesorDto: UpdateAsesorDto) {
-        const asesor = await this.asesorRepository.find({ where: { idAsesor } })
-        if (!asesor) {
-            throw new BadRequestException(new MessageDto('Asesor no encontrado'))
-        }
-        updateAsesorDto.estado = false;
-        await this.asesorRepository.update({ idAsesor }, updateAsesorDto);
-        return new MessageDto('Asesor eliminado');
+  // ======== Eliminar asesor
+  async delete(idAsesor: number, updateAsesorDto: UpdateAsesorDto) {
+    try {
+      const asesor = await this.asesorRepository.find({
+        where: { idAsesor: idAsesor },
+      });
+      if (!asesor) {
+        throw new BadRequestException(new MessageDto('Asesor no encontrado'));
+      }
+      updateAsesorDto.estado = false;
+      await this.asesorRepository.update({ idAsesor }, updateAsesorDto);
+      return new MessageDto('Asesor eliminado');
+    } catch (error) {
+      return new MessageDto(error);
     }
+  }
 
-    // ======== Actualizar asesor
-    async updateAsesor(idAsesor: number, updateAsesorDto: UpdateAsesorDto) {
-        const asesor = await this.asesorRepository.find({ where: { idAsesor } })
-        if (!asesor) {
-            throw new BadRequestException(new MessageDto('Asesor no encontrado'))
-        };
-        await this.asesorRepository.update({ idAsesor }, updateAsesorDto);
-        return new MessageDto('Asesor actualizado');
+  // ======== Actualizar asesor
+  async update(idAsesor: number, updateAsesorDto: UpdateAsesorDto) {
+    try {
+      const asesor = await this.asesorRepository.find({
+        where: { idAsesor: idAsesor },
+      });
+      if (!asesor) {
+        throw new BadRequestException(new MessageDto('Asesor no encontrado'));
+      }
+      await this.asesorRepository.update({ idAsesor }, updateAsesorDto);
+      return new MessageDto('Asesor actualizado');
+    } catch (error) {
+      return new MessageDto(error);
     }
+  }
 }
