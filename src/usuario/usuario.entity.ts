@@ -1,7 +1,15 @@
-import { hash } from "bcryptjs";
-import { AlquilerEntity } from "src/alquiler/alquiler.entity";
-import { TipoUsuarioEntity } from "src/tipo_usuario/tipo_usuario.entity";
-import { BeforeInsert, Column, Entity, JoinTable, ManyToMany, OneToMany, PrimaryGeneratedColumn } from "typeorm";
+import { hash } from 'bcryptjs';
+import { AlquilerEntity } from 'src/alquiler/alquiler.entity';
+import { TipoUsuarioEntity } from 'src/tipo_usuario/tipo_usuario.entity';
+import {
+  BeforeInsert,
+  Column,
+  Entity,
+  JoinTable,
+  ManyToMany,
+  OneToMany,
+  PrimaryGeneratedColumn,
+} from 'typeorm';
 
 @Entity({ name: 'usuario' })
 export class UsuarioEntity {
@@ -40,9 +48,9 @@ export class UsuarioEntity {
   tipo_usuario: TipoUsuarioEntity[];
 
   //============== Operaciones
-  // @BeforeInsert()
-  // async hashPasword() {
-  //   if (!this.contrasenia) return;
-  //   this.contrasenia = await hash(this.contrasenia, 12);
-  // }
+  @BeforeInsert()
+  async hashPasword() {
+    if (!this.contrasenia) return;
+    this.contrasenia = await hash(this.contrasenia, 12);
+  }
 }

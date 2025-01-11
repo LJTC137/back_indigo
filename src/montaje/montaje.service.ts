@@ -74,7 +74,7 @@ export class MontajeService {
         where: { idMontaje: idMontaje },
       });
       if (!montaje) {
-        throw new BadRequestException(new MessageDto('Local no encontrado'));
+        throw new BadRequestException(new MessageDto('Montaje no encontrado'));
       }
       await this.montajeRepository.update({ idMontaje }, updateMontajeDto);
       return new MessageDto('Montaje actualizado');

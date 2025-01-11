@@ -6,8 +6,8 @@ import { ProductoTecnicoEntity } from './producto_tecnico.entity';
 import { CatalogoEntity } from 'src/catalogo/catalogo.entity';
 
 @Module({
-  imports: [TypeOrmModule.forFeature([ CatalogoEntity, ProductoTecnicoEntity])],
+  imports: [TypeOrmModule.forFeature([CatalogoEntity, ProductoTecnicoEntity])],
   providers: [ProductoTecnicoService],
-  controllers: [ProductoTecnicoController]
+  controllers: [ProductoTecnicoController],
 })
 export class ProductoTecnicoModule {}

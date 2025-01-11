@@ -1,10 +1,16 @@
 import { AlquilerEntity } from 'src/alquiler/alquiler.entity';
 import { CatalogoEntity } from 'src/catalogo/catalogo.entity';
-import { Column, Entity, JoinColumn, ManyToOne, OneToMany, PrimaryGeneratedColumn } from 'typeorm';
+import {
+  Column,
+  Entity,
+  JoinColumn,
+  ManyToOne,
+  OneToMany,
+  PrimaryGeneratedColumn,
+} from 'typeorm';
 
 @Entity({ name: 'montaje' })
 export class MontajeEntity {
-
   @PrimaryGeneratedColumn()
   idMontaje: number;
 
@@ -41,11 +47,15 @@ export class MontajeEntity {
   montajeAlquiler: AlquilerEntity[];
 
   //======= Catalogo
-  @ManyToOne(() => CatalogoEntity, (catalogo) => catalogo.catalogoTipoCobro, { nullable: false })
+  @ManyToOne(() => CatalogoEntity, (catalogo) => catalogo.catalogoTipoCobro, {
+    nullable: false,
+  })
   @JoinColumn({ name: 'tipoCobro' })
   tipoCobro: CatalogoEntity;
 
-  @ManyToOne(() => CatalogoEntity, (catalogo) => catalogo.catalogoTipoMontaje, { nullable: false })
+  @ManyToOne(() => CatalogoEntity, (catalogo) => catalogo.catalogoTipoMontaje, {
+    nullable: false,
+  })
   @JoinColumn({ name: 'tipoMontaje' })
   tipoMontaje: CatalogoEntity;
 }

@@ -1,4 +1,4 @@
 export enum TipoEnum {
-    ADMIN = 'admin',
-    USER = 'usuario',
-  }
+  ADMIN = 'admin',
+  USER = 'usuario',
+}

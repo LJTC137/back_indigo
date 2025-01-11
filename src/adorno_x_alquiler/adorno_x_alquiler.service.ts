@@ -40,9 +40,7 @@ export class AdornoXAlquilerService {
   }
 
   // ======== Crear AdornoXAlquiler
-  async create(
-    createAdornoXAlquilerDto: CreateAdornoXAlquilerDto,
-  ) {
+  async create(createAdornoXAlquilerDto: CreateAdornoXAlquilerDto) {
     try {
       const adornoXAlquiler = this.adornoXAlquilerRepository.create(
         createAdornoXAlquilerDto,

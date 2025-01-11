@@ -7,8 +7,14 @@ import { AdornoXAlquilerEntity } from './adorno_x_alquiler.entity';
 import { AlquilerEntity } from 'src/alquiler/alquiler.entity';
 
 @Module({
-  imports: [TypeOrmModule.forFeature([AdornoEntity, AdornoXAlquilerEntity, AlquilerEntity])],
+  imports: [
+    TypeOrmModule.forFeature([
+      AdornoEntity,
+      AdornoXAlquilerEntity,
+      AlquilerEntity,
+    ]),
+  ],
   providers: [AdornoXAlquilerService],
-  controllers: [AdornoXAlquilerController]
+  controllers: [AdornoXAlquilerController],
 })
 export class AdornoXAlquilerModule {}

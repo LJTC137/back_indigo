@@ -8,6 +8,6 @@ import { CatalogoEntity } from 'src/catalogo/catalogo.entity';
 @Module({
   imports: [TypeOrmModule.forFeature([AdornoEntity, CatalogoEntity])],
   controllers: [AdornoController],
-  providers: [AdornoService]
+  providers: [AdornoService],
 })
 export class AdornoModule {}

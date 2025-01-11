@@ -51,16 +51,15 @@ export class EquipoServicioService {
   }
 
   // ======== Eliminar equipo
-  async delete(
-    idEquipo: number,
-    updateEquipoDto: UpdateEquipoServicioDto,
-  ) {
+  async delete(idEquipo: number, updateEquipoDto: UpdateEquipoServicioDto) {
     try {
       const equipo = await this.equipoRepository.find({
         where: { idEquipo: idEquipo },
       });
       if (!equipo) {
-        throw new BadRequestException(new MessageDto('Equipo de servicio no encontrado'));
+        throw new BadRequestException(
+          new MessageDto('Equipo de servicio no encontrado'),
+        );
       }
       updateEquipoDto.estado = false;
       await this.equipoRepository.update({ idEquipo }, updateEquipoDto);
@@ -71,10 +70,7 @@ export class EquipoServicioService {
   }
 
   // ======== Actualizar equipo
-  async update(
-    idEquipo: number,
-    updateEquipoDto: UpdateEquipoServicioDto,
-  ) {
+  async update(idEquipo: number, updateEquipoDto: UpdateEquipoServicioDto) {
     try {
       const equipo = await this.equipoRepository.find({
         where: { idEquipo: idEquipo },

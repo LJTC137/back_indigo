@@ -49,10 +49,7 @@ export class CatalogoService {
   }
 
   // ======== Eliminar catalogo
-  async delete(
-    idCatalogo: number,
-    updateCatalogoDto: UpdateCatalogoDto,
-  ) {
+  async delete(idCatalogo: number, updateCatalogoDto: UpdateCatalogoDto) {
     try {
       const catalogo = await this.catalogoRepository.find({
         where: { idCatalogo: idCatalogo },
@@ -69,10 +66,7 @@ export class CatalogoService {
   }
 
   // ======== Actualizar catalogo
-  async update(
-    idCatalogo: number,
-    updateCatalogoDto: UpdateCatalogoDto,
-  ) {
+  async update(idCatalogo: number, updateCatalogoDto: UpdateCatalogoDto) {
     try {
       const catalogo = await this.catalogoRepository.find({
         where: { idCatalogo: idCatalogo },

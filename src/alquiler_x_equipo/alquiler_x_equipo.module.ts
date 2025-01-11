@@ -7,8 +7,14 @@ import { EquipoServicioEntity } from 'src/equipo_servicio/equipo_servicio.entity
 import { AlquilerXEquipoEntity } from './alquiler_x_equipo.entity';
 
 @Module({
-  imports: [TypeOrmModule.forFeature([AlquilerEntity, AlquilerXEquipoEntity, EquipoServicioEntity])],
+  imports: [
+    TypeOrmModule.forFeature([
+      AlquilerEntity,
+      AlquilerXEquipoEntity,
+      EquipoServicioEntity,
+    ]),
+  ],
   providers: [AlquilerXEquipoService],
-  controllers: [AlquilerXEquipoController]
+  controllers: [AlquilerXEquipoController],
 })
 export class AlquilerXEquipoModule {}

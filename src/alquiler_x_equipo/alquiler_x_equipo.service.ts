@@ -40,9 +40,7 @@ export class AlquilerXEquipoService {
   }
 
   // ======== Crear alquilerXEquipo
-  async create(
-    createAlquilerXEquipoDto: CreateAlquilerXEquipoDto,
-  ) {
+  async create(createAlquilerXEquipoDto: CreateAlquilerXEquipoDto) {
     try {
       const alquilerXEquipo = this.alquilerXEquipoRepository.create(
         createAlquilerXEquipoDto,

@@ -17,10 +17,10 @@ import { UsuarioEntity } from 'src/usuario/usuario.entity';
       CatalogoEntity,
       LocalEntity,
       MontajeEntity,
-      UsuarioEntity
-    ])
+      UsuarioEntity,
+    ]),
   ],
   providers: [AlquilerService],
-  controllers: [AlquilerController]
+  controllers: [AlquilerController],
 })
-export class AlquilerModule { }
+export class AlquilerModule {}

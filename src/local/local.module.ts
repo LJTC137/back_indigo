@@ -8,6 +8,6 @@ import { LocalEntity } from './local.entity';
 @Module({
   imports: [TypeOrmModule.forFeature([CatalogoEntity, LocalEntity])],
   providers: [LocalService],
-  controllers: [LocalController]
+  controllers: [LocalController],
 })
-export class LocalModule { }
+export class LocalModule {}

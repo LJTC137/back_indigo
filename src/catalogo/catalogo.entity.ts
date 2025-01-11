@@ -37,10 +37,16 @@ export class CatalogoEntity {
   catalogoTipoCatering: CateringEntity[];
 
   //==========Equipo servicio
-  @OneToMany(() => EquipoServicioEntity, (equipoServicio) => equipoServicio.tipoContratacion)
+  @OneToMany(
+    () => EquipoServicioEntity,
+    (equipoServicio) => equipoServicio.tipoContratacion,
+  )
   catalogoTipoContratacion: EquipoServicioEntity[];
 
-  @OneToMany(() => EquipoServicioEntity, (equipoServicio) => equipoServicio.tipoEquipo)
+  @OneToMany(
+    () => EquipoServicioEntity,
+    (equipoServicio) => equipoServicio.tipoEquipo,
+  )
   catalogoTipoEquipo: EquipoServicioEntity[];
 
   //==========Local
@@ -48,19 +54,25 @@ export class CatalogoEntity {
   catalogoEstadoLocal: LocalEntity[];
 
   @OneToMany(() => LocalEntity, (local) => local.tipoLocal)
-  catalogoTipoLocal: LocalEntity[]
+  catalogoTipoLocal: LocalEntity[];
 
   //==========Montaje
   @OneToMany(() => MontajeEntity, (montaje) => montaje.tipoCobro)
   catalogoTipoCobro: MontajeEntity[];
-  
+
   @OneToMany(() => MontajeEntity, (montaje) => montaje.tipoMontaje)
   catalogoTipoMontaje: MontajeEntity[];
 
   //==========Productos Tecnicos
-  @OneToMany(() => ProductoTecnicoEntity, (productoTecnico) => productoTecnico.estadoEquipo)
+  @OneToMany(
+    () => ProductoTecnicoEntity,
+    (productoTecnico) => productoTecnico.estadoEquipo,
+  )
   catalogoEstadoProducto: ProductoTecnicoEntity[];
 
-  @OneToMany(() => ProductoTecnicoEntity, (productoTecnico) => productoTecnico.tipoProducto)
+  @OneToMany(
+    () => ProductoTecnicoEntity,
+    (productoTecnico) => productoTecnico.tipoProducto,
+  )
   catalogoTipoProducto: ProductoTecnicoEntity[];
 }
