@@ -12,7 +12,7 @@ import { AlquilerXEquipoService } from './alquiler_x_equipo.service';
 import { CreateAlquilerXEquipoDto } from './dto/create-alquiler-equipo.dto';
 import { UpdateAlquilerXEquipoDto } from './dto/update-alquiler-equipo.dto';
 
-@Controller('alquiler-x-equipo')
+@Controller('reservaXEquipo')
 export class AlquilerXEquipoController {
   constructor(
     private readonly alquilerXEquipoService: AlquilerXEquipoService,

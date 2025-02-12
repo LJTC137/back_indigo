@@ -12,7 +12,7 @@ import { AdornoXAlquilerService } from './adorno_x_alquiler.service';
 import { CreateAdornoXAlquilerDto } from './dto/create-adorno-alquiler.dto';
 import { UpdateAdornoXAlquilerDto } from './dto/update-adorno-alquiler.dto';
 
-@Controller('adorno-x-alquiler')
+@Controller('adornoXReserva')
 export class AdornoXAlquilerController {
   constructor(
     private readonly adornoXAlquilerService: AdornoXAlquilerService,

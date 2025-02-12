@@ -12,7 +12,7 @@ import { EquipoServicioService } from './equipo_servicio.service';
 import { CreateEquipoServicioDto } from './dto/create-equipo-servicio.dto';
 import { UpdateEquipoServicioDto } from './dto/update-equipo-servicio.dto';
 
-@Controller('equipo-servicio')
+@Controller('equipoServicio')
 export class EquipoServicioController {
   constructor(private readonly equipoServicioService: EquipoServicioService) {}
 

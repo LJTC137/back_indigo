@@ -9,7 +9,7 @@ import {
 import { TipoUsuarioService } from './tipo_usuario.service';
 import { CreateTipoUsuarioDto } from './dto/create_tipo.dto';
 
-@Controller('tipo-usuario')
+@Controller('tipoUsuario')
 export class TipoUsuarioController {
   constructor(private tipoUsuarioService: TipoUsuarioService) {}
 

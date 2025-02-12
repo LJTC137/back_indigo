@@ -12,7 +12,7 @@ import { ProductoTecnicoService } from './producto_tecnico.service';
 import { CreateProductoTecnicoDto } from './dto/create-producto.dto';
 import { UpdateProductoTecnicoDto } from './dto/update-producto.dto';
 
-@Controller('producto-tecnico') // Ruta base para los productos técnicos
+@Controller('productoTecnico')
 export class ProductoTecnicoController {
   constructor(
     private readonly productoTecnicoService: ProductoTecnicoService,

@@ -12,7 +12,7 @@ import { AlquilerService } from './alquiler.service';
 import { CreateAlquilerDto } from './dto/create-alquiler.dto';
 import { UpdateAlquilerDto } from './dto/update-alquiler.dto';
 
-@Controller('alquiler')
+@Controller('reserva')
 export class AlquilerController {
   constructor(private readonly alquilerService: AlquilerService) {}
 
