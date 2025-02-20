@@ -31,7 +31,7 @@ export class CatalogoController {
   // ======== Crear un nuevo catálogo
   @Post()
   async create(@Body() createCatalogoDto: CreateCatalogoDto) {
-    return await this.catalogoService.crear(createCatalogoDto);
+    return await this.catalogoService.create(createCatalogoDto);
   }
 
   // ======== Actualizar un catálogo

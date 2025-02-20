@@ -99,7 +99,6 @@ export class AuthService {
   }
 
   async updateUsuario(idUsuario: number, updateUsuarioDto: UpdateUsuarioDto) {
-    const { tipo_usuarioId, ...updateData } = updateUsuarioDto;
-    await this.authRepository.update(idUsuario, updateData);
+    await this.authRepository.update(idUsuario, updateUsuarioDto);
   }
 }

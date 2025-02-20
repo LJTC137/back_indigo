@@ -38,11 +38,17 @@ export class CatalogoService {
   }
 
   // ======== Crear catalogo
-  async crear(createCatalogoDto: CreateCatalogoDto) {
+  async create(createCatalogoDto: CreateCatalogoDto) {
     try {
       const catalogo = this.catalogoRepository.create(createCatalogoDto);
-      await this.catalogoRepository.create(catalogo);
-      return new MessageDto('Catalogo registrado');
+      if (!catalogo) {
+        throw new BadRequestException(
+          new MessageDto('Error al crear catalogo'),
+        );
+      } else {
+        await this.catalogoRepository.save(catalogo);
+        return new MessageDto('Catalogo registrado');
+      }
     } catch (error) {
       return new MessageDto(error);
     }

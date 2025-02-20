@@ -16,7 +16,10 @@ export class EquipoServicioService {
   // ======= Listar todos los equipos
   async getList() {
     try {
-      return await this.equipoRepository.find({ where: { estado: true } });
+      return await this.equipoRepository.find({
+        where: { estado: true },
+        relations: ['tipoEquipo', 'tipoContratacion'],
+      });
     } catch (error) {
       return new MessageDto(error);
     }
@@ -27,6 +30,7 @@ export class EquipoServicioService {
     try {
       const equipo = await this.equipoRepository.find({
         where: { idEquipo: idEquipo, estado: true },
+        relations: ['tipoEquipo', 'tipoContratacion'],
       });
       if (!equipo) {
         throw new BadRequestException(

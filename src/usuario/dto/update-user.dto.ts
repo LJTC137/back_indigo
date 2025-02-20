@@ -17,8 +17,12 @@ export class UpdateUsuarioDto {
   nombres?: string;
 
   @IsNotEmpty({ message: 'El campo identificación no puede estar vacío' })
-  @MaxLength(13, { message: 'La identificación tiene un máximo de 13 caracteres' })
-  @MinLength(10, { message: 'La identificación tiene un mínimo de 10 caracteres' })
+  @MaxLength(13, {
+    message: 'La identificación tiene un máximo de 13 caracteres',
+  })
+  @MinLength(10, {
+    message: 'La identificación tiene un mínimo de 10 caracteres',
+  })
   @IsString({ message: 'El campo identificación debe ser una cadena de texto' })
   identificacion?: string;
 
@@ -33,5 +37,5 @@ export class UpdateUsuarioDto {
   @IsBoolean({ message: 'El campo estado debe ser un valor de si o no' })
   estado?: boolean;
 
-  tipo_usuarioId?: number;
+  tipo_usuario?;
 }

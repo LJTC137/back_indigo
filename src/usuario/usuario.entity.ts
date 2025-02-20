@@ -11,32 +11,92 @@ import {
   PrimaryGeneratedColumn,
 } from 'typeorm';
 
-@Entity({ name: 'usuario' })
+/**
+ * Entidad que representa la tabla "usuario".
+ */
+@Entity({
+  name: 'usuario',
+  comment: 'Tabla encargada del registro de empleados del sistema.',
+})
 export class UsuarioEntity {
-  @PrimaryGeneratedColumn()
+  /**
+   * Primary key tipo serial de la tabla usuario.
+   */
+  @PrimaryGeneratedColumn({
+    comment: 'Primary key tipo serial de la tabla usuario.',
+  })
   idUsuario: number;
 
-  @Column({ type: 'character varying', length: '70', nullable: false })
+  /**
+   * Character varying para los nombres de los empleados con acceso al sistema.
+   */
+  @Column({
+    type: 'character varying',
+    length: '70',
+    nullable: false,
+    comment:
+      'Character varying para los nombres de los empleados con acceso al sistema.',
+  })
   nombres: string;
 
-  @Column({ type: 'character varying', length: '13', nullable: false })
+  /**
+   * Character varying para la cédula, RUC o pasaporte del empleado.
+   */
+  @Column({
+    type: 'character varying',
+    length: '13',
+    nullable: false,
+    comment: 'Character varying para la cédula, RUC o pasaporte del empleado.',
+  })
   identificacion: string;
 
-  @Column({ type: 'character varying', length: '100', nullable: false })
+  /**
+   * Character varying para el correo electrónico que tiene el usuario.
+   */
+  @Column({
+    type: 'character varying',
+    length: '100',
+    nullable: false,
+    comment:
+      'Character varying para el correo electrónico que tiene el usuario.',
+  })
   correo: string;
 
-  @Column({ type: 'character varying', length: '100', nullable: false })
+  /**
+   * Character varying para la contraseña de acceso al sistema.
+   */
+  @Column({
+    type: 'character varying',
+    length: '100',
+    nullable: false,
+    comment: 'Character varying para la contraseña de acceso al sistema.',
+  })
   contrasenia: string;
 
-  @Column({ type: 'boolean', default: true, nullable: false })
+  /**
+   * Booleano para el estado de eliminado del usuario.
+   */
+  @Column({
+    type: 'boolean',
+    default: true,
+    nullable: false,
+    comment: 'Booleano para el estado de eliminado del usuario.',
+  })
   estado: boolean;
 
-  //============== Foreign keys
-  //======= Alquiler
+  // Relaciones
+
+  /**
+   * Relación uno a muchos con la entidad Alquiler.
+   * Un usuario puede tener varios registros de alquiler.
+   */
   @OneToMany(() => AlquilerEntity, (alquiler) => alquiler.usuario)
   usuarioAlquiler: AlquilerEntity[];
 
-  //======= Tipo Usuario
+  /**
+   * Relación muchos a muchos con la entidad TipoUsuario.
+   * Se utiliza la tabla intermedia "usuario_tipoUsuario" para asociar roles a los usuarios.
+   */
   @ManyToMany(() => TipoUsuarioEntity, (rol) => rol.tipo_usuario, {
     eager: true,
   })
@@ -47,7 +107,9 @@ export class UsuarioEntity {
   })
   tipo_usuario: TipoUsuarioEntity[];
 
-  //============== Operaciones
+  /**
+   * Antes de insertar el usuario en la base de datos, se encripta la contraseña.
+   */
   @BeforeInsert()
   async hashPasword() {
     if (!this.contrasenia) return;

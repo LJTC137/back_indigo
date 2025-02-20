@@ -16,7 +16,10 @@ export class LocalService {
   // ======= Listar todos los locales
   async getList() {
     try {
-      return await this.localRepository.find({ where: { estado: true } });
+      return await this.localRepository.find({
+        where: { estado: true },
+        relations: ['tipoLocal', 'estadoDisponibilidad'],
+      });
     } catch (error) {
       return new MessageDto(error);
     }
@@ -27,6 +30,7 @@ export class LocalService {
     try {
       const local = await this.localRepository.find({
         where: { idLocal: idLocal, estado: true },
+        relations: ['tipoLocal', 'estadoDisponibilidad'],
       });
       if (!local) {
         throw new BadRequestException(
@@ -43,6 +47,7 @@ export class LocalService {
   async create(createLocalDto: CreateLocalDto) {
     try {
       const local = this.localRepository.create(createLocalDto);
+      console.log(local);
       await this.localRepository.save(local);
       return new MessageDto('Local registrado');
     } catch (error) {

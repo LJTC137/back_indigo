@@ -18,6 +18,7 @@ export class ProductoTecnicoService {
     try {
       return await this.productoTecnicoRepository.find({
         where: { estado: true },
+        relations: ['tipoProducto', 'estadoEquipo'],
       });
     } catch (error) {
       return new MessageDto(error);

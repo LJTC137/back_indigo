@@ -9,50 +9,144 @@ import {
   PrimaryGeneratedColumn,
 } from 'typeorm';
 
-@Entity({ name: 'montaje' })
+/**
+ * Entidad que representa la tabla "montaje".
+ * Tabla encargada de gestionar los montajes disponibles para los eventos.
+ */
+@Entity({
+  name: 'montaje',
+  comment:
+    'Tabla encargada de gestionar los montajes disponibles para los eventos.',
+})
 export class MontajeEntity {
-  @PrimaryGeneratedColumn()
+  /**
+   * Primary key tipo serial para los montajes.
+   */
+  @PrimaryGeneratedColumn({
+    comment: 'Primary key tipo serial para los montajes.',
+  })
   idMontaje: number;
 
-  @Column({ nullable: false, type: 'character varying', length: '250' })
+  /**
+   * Character varying para describir el montaje en detalle.
+   */
+  @Column({
+    nullable: false,
+    type: 'character varying',
+    length: '250',
+    comment: 'Character varying para describir el montaje en detalle.',
+  })
   descripcion: string;
 
-  @Column({ nullable: false, type: 'boolean', default: true })
+  /**
+   * Booleano para indicar si el montaje está disponible.
+   */
+  @Column({
+    nullable: false,
+    type: 'boolean',
+    default: true,
+    comment: 'Booleano para indicar si el montaje está disponible.',
+  })
   esDisponible: boolean;
 
-  @Column({ nullable: false, type: 'boolean', default: true })
+  /**
+   * Booleano para el estado de eliminado del montaje.
+   */
+  @Column({
+    nullable: false,
+    type: 'boolean',
+    default: true,
+    comment: 'Booleano para el estado de eliminado del montaje.',
+  })
   estado: boolean;
 
-  @Column({ nullable: false, type: 'integer' })
+  /**
+   * Integer para la capacidad máxima del montaje en términos de personas en caso de mesas.
+   */
+  @Column({
+    nullable: false,
+    type: 'integer',
+    comment:
+      'Integer para la capacidad máxima del montaje en términos de personas en caso de mesas.',
+  })
   capacidadMaxima: number;
 
-  @Column({ nullable: false, type: 'double precision' })
+  /**
+   * Decimal para el costo por mesa del montaje en caso de solo mesas.
+   */
+  @Column({
+    nullable: false,
+    type: 'double precision',
+    comment:
+      'Decimal para el costo por mesa del montaje en caso de solo mesas.',
+  })
   costoMesa: number;
 
-  @Column({ nullable: false, type: 'double precision' })
+  /**
+   * Decimal para el costo por silla del montaje en caso de solo sillas.
+   */
+  @Column({
+    nullable: false,
+    type: 'double precision',
+    comment:
+      'Decimal para el costo por silla del montaje en caso de solo sillas.',
+  })
   costoSilla: number;
 
-  @Column({ nullable: false, type: 'double precision' })
+  /**
+   * Decimal para el costo de un paquete completo de montaje en caso de sillas y mesas.
+   */
+  @Column({
+    nullable: false,
+    type: 'double precision',
+    comment:
+      'Decimal para el costo de un paquete completo de montaje en caso de sillas y mesas.',
+  })
   costoPack: number;
 
-  @Column({ nullable: false, type: 'double precision' })
+  /**
+   * Decimal para el monto del depósito reembolsable asociado al montaje en caso de cualquier daño o prejuicio a los montajes.
+   */
+  @Column({
+    nullable: false,
+    type: 'double precision',
+    comment:
+      'Decimal para el monto del depósito reembolsable asociado al montaje en caso de cualquier daño o prejuicio a los montajes.',
+  })
   depositoReembolsable: number;
 
-  @Column({ nullable: false, type: 'character varying', length: '50' })
+  /**
+   * Character varying para el nombre o referencia del montaje.
+   */
+  @Column({
+    nullable: false,
+    type: 'character varying',
+    length: '50',
+    comment: 'Character varying para el nombre o referencia del montaje.',
+  })
   nombre: string;
 
-  //============== Foreign keys
-  //======= Alquiler
+  //============== Relaciones
+
+  /**
+   * Relación uno a muchos con la entidad Alquiler.
+   * Un montaje puede estar asociado a varios alquileres.
+   */
   @OneToMany(() => AlquilerEntity, (alquiler) => alquiler.montaje)
   montajeAlquiler: AlquilerEntity[];
 
-  //======= Catalogo
+  /**
+   * Foreign key de la tabla catálogo para el tipo de cobro (por evento, por horas).
+   */
   @ManyToOne(() => CatalogoEntity, (catalogo) => catalogo.catalogoTipoCobro, {
     nullable: false,
   })
   @JoinColumn({ name: 'tipoCobro' })
   tipoCobro: CatalogoEntity;
 
+  /**
+   * Foreign key de la tabla catálogo para el tipo de montaje (clásico, moderno, rústico, etc.).
+   */
   @ManyToOne(() => CatalogoEntity, (catalogo) => catalogo.catalogoTipoMontaje, {
     nullable: false,
   })

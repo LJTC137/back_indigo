@@ -16,7 +16,7 @@ export class ColorService {
   // ======== Listar colores
   async getList() {
     try {
-      return await this.colorRepository.find();
+      return await this.colorRepository.find({ where: { estado: true } });
     } catch (error) {
       return new MessageDto(error);
     }
@@ -41,7 +41,8 @@ export class ColorService {
   async crear(createColorDto: CreateColorDto) {
     try {
       const color = this.colorRepository.create(createColorDto);
-      await this.colorRepository.create(color);
+      this.colorRepository.create(color);
+      await this.colorRepository.save(color);
       return new MessageDto('Color registrado');
     } catch (error) {
       return new MessageDto(error);
@@ -68,16 +69,22 @@ export class ColorService {
   // ======== Actualizar color
   async update(idColor: number, updateColorDto: UpdateColorDto) {
     try {
-      const color = await this.colorRepository.find({
-        where: { idColor: idColor },
-      });
+      const color = await this.colorRepository.findOne({ where: { idColor } });
+
       if (!color) {
         throw new BadRequestException(new MessageDto('Color no encontrado'));
       }
-      await this.colorRepository.update({ idColor }, updateColorDto);
-      return new MessageDto('Color actualizado');
+      await this.colorRepository.update(idColor, updateColorDto);
+
+      const colorActualizado = await this.colorRepository.findOne({
+        where: { idColor },
+      });
+
+      return colorActualizado;
     } catch (error) {
-      return new MessageDto(error);
+      throw new BadRequestException(
+        new MessageDto(error.message || 'Error al actualizar el color'),
+      );
     }
   }
 }

@@ -1,10 +1,6 @@
-import {
-  IsBoolean,
-  IsNotEmpty,
-  IsNumber,
-  IsString,
-  MaxLength,
-} from 'class-validator';
+import { IsBoolean, IsNumber, IsString, MaxLength } from 'class-validator';
+import { CatalogoEntity } from 'src/catalogo/catalogo.entity';
+import { ColorEntity } from 'src/color/color.entity';
 
 export class UpdateAdornoDto {
   idAdorno: number;
@@ -34,12 +30,13 @@ export class UpdateAdornoDto {
   })
   dimensiones?: string;
 
-  @IsNumber({ maxDecimalPlaces: 2, allowNaN: false })
+  @IsNumber({ maxDecimalPlaces: 2 })
   precioUnitario?: number;
 
-  @IsNumber({ maxDecimalPlaces: 0, allowNaN: false })
+  @IsNumber({ maxDecimalPlaces: 0 })
   cantidad?: number;
 
-  tipoAdornoId?;
-  adornoColorIds?;
+  tipoAdorno?;
+
+  adornoColor?;
 }

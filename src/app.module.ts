@@ -8,7 +8,7 @@ import {
   DB_PASSWORD,
   DB_PORT,
   DB_USER,
-} from './config/constants'
+} from './config/constants';
 import { UsuarioModule } from './usuario/usuario.module';
 import { TipoUsuarioModule } from './tipo_usuario/tipo_usuario.module';
 import { CatalogoModule } from './catalogo/catalogo.module';
@@ -43,8 +43,8 @@ import { AdornoXAlquilerModule } from './adorno_x_alquiler/adorno_x_alquiler.mod
         password: configService.get<string>(DB_PASSWORD),
         database: configService.get<string>(DB_DATABASE),
         entities: ['dist/**/*.entity{.ts,.js}'],
-        autoLoadEntities: true,
-        synchronize: false,
+        autoLoadEntities: false,
+        synchronize: true,
         dropSchema: false,
         retryDelay: 3000,
         retryAttempts: 10,
@@ -71,4 +71,4 @@ import { AdornoXAlquilerModule } from './adorno_x_alquiler/adorno_x_alquiler.mod
   controllers: [],
   providers: [],
 })
-export class AppModule { }
+export class AppModule {}

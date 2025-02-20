@@ -1,9 +1,9 @@
 import { AlquilerEntity } from 'src/alquiler/alquiler.entity';
-import { Column, Entity, OneToMany, PrimaryColumn } from 'typeorm';
+import { Column, Entity, OneToMany, PrimaryGeneratedColumn } from 'typeorm';
 
 @Entity({ name: 'asesor' })
 export class AsesorEntity {
-  @PrimaryColumn()
+  @PrimaryGeneratedColumn()
   idAsesor: number;
 
   @Column({ nullable: false, type: 'boolean', default: true })

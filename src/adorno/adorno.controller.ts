@@ -45,10 +45,7 @@ export class AdornoController {
 
   // ======== Eliminar un adorno
   @Delete(':id')
-  async delete(
-    @Param('id', ParseIntPipe) idAdorno: number,
-    @Body() updateAdornoDto: UpdateAdornoDto,
-  ) {
-    return await this.adornoService.delete(idAdorno, updateAdornoDto);
+  async delete(@Param('id', ParseIntPipe) idAdorno: number) {
+    return await this.adornoService.delete(idAdorno);
   }
 }

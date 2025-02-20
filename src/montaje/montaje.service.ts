@@ -16,7 +16,10 @@ export class MontajeService {
   // ======= Listar todos los montajes
   async getList() {
     try {
-      return await this.montajeRepository.find({ where: { estado: true } });
+      return await this.montajeRepository.find({
+        where: { estado: true },
+        relations: ['tipoCobro', 'tipoMontaje'],
+      });
     } catch (error) {
       return new MessageDto(error);
     }
@@ -27,6 +30,7 @@ export class MontajeService {
     try {
       const montaje = await this.montajeRepository.find({
         where: { idMontaje: idMontaje, estado: true },
+        relations: ['tipoCobro', 'tipoMontaje'],
       });
       if (!montaje) {
         throw new BadRequestException(
