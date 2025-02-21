@@ -1,4 +1,4 @@
-import { BadRequestException, Injectable } from '@nestjs/common';
+import { BadRequestException, Injectable, HttpStatus } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { CatalogoEntity } from './catalogo.entity';
 import { Repository } from 'typeorm';
@@ -13,77 +13,153 @@ export class CatalogoService {
     private readonly catalogoRepository: Repository<CatalogoEntity>,
   ) {}
 
-  // ======== Listar catalogos
-  async getList() {
+  // ======== Listar todos los catálogos
+  async getList(): Promise<CatalogoEntity[]> {
     try {
       return await this.catalogoRepository.find({ where: { estado: true } });
     } catch (error) {
-      return new MessageDto(error);
+      throw new BadRequestException(
+        new MessageDto(
+          'Error al obtener la lista de catálogos',
+          'error',
+          HttpStatus.BAD_REQUEST,
+          0,
+        ),
+      );
     }
   }
 
-  // ======== Listar catalogos
-  async getById(idCatalogo: number) {
+  // ======== Obtener catálogo por ID
+  async getById(idCatalogo: number): Promise<CatalogoEntity> {
     try {
-      const catalogo = await this.catalogoRepository.find({
-        where: { idCatalogo: idCatalogo },
+      const catalogo = await this.catalogoRepository.findOne({
+        where: { idCatalogo, estado: true },
       });
-      if (!catalogo) {
-        throw new BadRequestException(new MessageDto('Catalogo no encontrado'));
-      }
-      return catalogo;
-    } catch (error) {
-      return new MessageDto(error);
-    }
-  }
 
-  // ======== Crear catalogo
-  async create(createCatalogoDto: CreateCatalogoDto) {
-    try {
-      const catalogo = this.catalogoRepository.create(createCatalogoDto);
       if (!catalogo) {
         throw new BadRequestException(
-          new MessageDto('Error al crear catalogo'),
+          new MessageDto(
+            'Catálogo no encontrado',
+            'error',
+            HttpStatus.NOT_FOUND,
+            0,
+          ),
         );
-      } else {
-        await this.catalogoRepository.save(catalogo);
-        return new MessageDto('Catalogo registrado');
       }
+
+      return catalogo;
     } catch (error) {
-      return new MessageDto(error);
+      throw new BadRequestException(
+        new MessageDto(
+          'Error al obtener el catálogo',
+          'error',
+          HttpStatus.BAD_REQUEST,
+          0,
+        ),
+      );
     }
   }
 
-  // ======== Eliminar catalogo
-  async delete(idCatalogo: number, updateCatalogoDto: UpdateCatalogoDto) {
+  // ======== Crear un nuevo catálogo
+  async create(createCatalogoDto: CreateCatalogoDto): Promise<MessageDto> {
     try {
-      const catalogo = await this.catalogoRepository.find({
-        where: { idCatalogo: idCatalogo },
-      });
-      if (!catalogo) {
-        throw new BadRequestException(new MessageDto('Catalogo no encontrado'));
-      }
-      updateCatalogoDto.estado = false;
-      await this.catalogoRepository.update({ idCatalogo }, updateCatalogoDto);
-      return new MessageDto('Catalogo eliminado');
+      const catalogo = this.catalogoRepository.create(createCatalogoDto);
+      const savedCatalogo = await this.catalogoRepository.save(catalogo);
+
+      return new MessageDto(
+        'Catálogo registrado con éxito',
+        'success',
+        HttpStatus.CREATED,
+        savedCatalogo.idCatalogo,
+      );
     } catch (error) {
-      return new MessageDto(error);
+      throw new BadRequestException(
+        new MessageDto(
+          'Error al registrar el catálogo',
+          'error',
+          HttpStatus.BAD_REQUEST,
+          0,
+        ),
+      );
     }
   }
 
-  // ======== Actualizar catalogo
-  async update(idCatalogo: number, updateCatalogoDto: UpdateCatalogoDto) {
+  // ======== Actualizar un catálogo existente
+  async update(
+    idCatalogo: number,
+    updateCatalogoDto: UpdateCatalogoDto,
+  ): Promise<MessageDto> {
     try {
-      const catalogo = await this.catalogoRepository.find({
-        where: { idCatalogo: idCatalogo },
+      const catalogo = await this.catalogoRepository.findOne({
+        where: { idCatalogo },
       });
+
       if (!catalogo) {
-        throw new BadRequestException(new MessageDto('Catalogo no encontrado'));
+        throw new BadRequestException(
+          new MessageDto(
+            'Catálogo no encontrado',
+            'error',
+            HttpStatus.NOT_FOUND,
+            0,
+          ),
+        );
       }
-      await this.catalogoRepository.update({ idCatalogo }, updateCatalogoDto);
-      return new MessageDto('Catalogo actualizado');
+
+      await this.catalogoRepository.update(idCatalogo, updateCatalogoDto);
+
+      return new MessageDto(
+        'Catálogo actualizado correctamente',
+        'success',
+        HttpStatus.OK,
+        idCatalogo,
+      );
     } catch (error) {
-      return new MessageDto(error);
+      throw new BadRequestException(
+        new MessageDto(
+          'Error al actualizar el catálogo',
+          'error',
+          HttpStatus.BAD_REQUEST,
+          0,
+        ),
+      );
+    }
+  }
+
+  // ======== Eliminar un catálogo (cambio de estado en lugar de borrado físico)
+  async delete(idCatalogo: number): Promise<MessageDto> {
+    try {
+      const catalogo = await this.catalogoRepository.findOne({
+        where: { idCatalogo },
+      });
+
+      if (!catalogo) {
+        throw new BadRequestException(
+          new MessageDto(
+            'Catálogo no encontrado',
+            'error',
+            HttpStatus.NOT_FOUND,
+            0,
+          ),
+        );
+      }
+
+      await this.catalogoRepository.update(idCatalogo, { estado: false });
+
+      return new MessageDto(
+        'Catálogo eliminado correctamente',
+        'success',
+        HttpStatus.OK,
+        idCatalogo,
+      );
+    } catch (error) {
+      throw new BadRequestException(
+        new MessageDto(
+          'Error al eliminar el catálogo',
+          'error',
+          HttpStatus.BAD_REQUEST,
+          0,
+        ),
+      );
     }
   }
 }

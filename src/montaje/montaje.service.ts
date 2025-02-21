@@ -1,4 +1,4 @@
-import { BadRequestException, Injectable } from '@nestjs/common';
+import { BadRequestException, Injectable, HttpStatus } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { MontajeEntity } from './montaje.entity';
 import { Repository } from 'typeorm';
@@ -14,76 +14,156 @@ export class MontajeService {
   ) {}
 
   // ======= Listar todos los montajes
-  async getList() {
+  async getList(): Promise<MontajeEntity[]> {
     try {
       return await this.montajeRepository.find({
         where: { estado: true },
         relations: ['tipoCobro', 'tipoMontaje'],
       });
     } catch (error) {
-      return new MessageDto(error);
+      throw new BadRequestException(
+        new MessageDto(
+          'Error al obtener la lista de montajes',
+          'error',
+          HttpStatus.BAD_REQUEST,
+          0,
+        ),
+      );
     }
   }
 
-  // ======= Listar montaje por id
-  async getById(idMontaje: number) {
+  // ======= Obtener montaje por ID
+  async getById(idMontaje: number): Promise<MontajeEntity> {
     try {
-      const montaje = await this.montajeRepository.find({
-        where: { idMontaje: idMontaje, estado: true },
+      const montaje = await this.montajeRepository.findOne({
+        where: { idMontaje, estado: true },
         relations: ['tipoCobro', 'tipoMontaje'],
       });
+
       if (!montaje) {
         throw new BadRequestException(
-          new MessageDto('No sea a encontrado el montaje'),
+          new MessageDto(
+            'Montaje no encontrado',
+            'error',
+            HttpStatus.NOT_FOUND,
+            0,
+          ),
         );
       }
+
       return montaje;
     } catch (error) {
-      return new MessageDto(error);
+      throw new BadRequestException(
+        new MessageDto(
+          'Error al obtener el montaje',
+          'error',
+          HttpStatus.BAD_REQUEST,
+          0,
+        ),
+      );
     }
   }
 
-  // ======== Crear montaje
-  async create(createMontajeDto: CreateMontajeDto) {
+  // ======== Crear un nuevo montaje
+  async create(createMontajeDto: CreateMontajeDto): Promise<MessageDto> {
     try {
       const montaje = this.montajeRepository.create(createMontajeDto);
-      await this.montajeRepository.save(montaje);
-      return new MessageDto('Montaje registrado');
+      const savedMontaje = await this.montajeRepository.save(montaje);
+
+      return new MessageDto(
+        'Montaje registrado correctamente',
+        'success',
+        HttpStatus.CREATED,
+        savedMontaje.idMontaje,
+      );
     } catch (error) {
-      return new MessageDto(error);
+      throw new BadRequestException(
+        new MessageDto(
+          'Error al registrar el montaje',
+          'error',
+          HttpStatus.BAD_REQUEST,
+          0,
+        ),
+      );
     }
   }
 
-  // ======== Eliminar montaje
-  async delete(idMontaje: number, updateMontajeDto: UpdateMontajeDto) {
+  // ======== Actualizar un montaje existente
+  async update(
+    idMontaje: number,
+    updateMontajeDto: UpdateMontajeDto,
+  ): Promise<MessageDto> {
     try {
-      const montaje = await this.montajeRepository.find({
-        where: { idMontaje: idMontaje },
+      const montaje = await this.montajeRepository.findOne({
+        where: { idMontaje },
       });
+
       if (!montaje) {
-        throw new BadRequestException(new MessageDto('Montaje no encontrado'));
+        throw new BadRequestException(
+          new MessageDto(
+            'Montaje no encontrado',
+            'error',
+            HttpStatus.NOT_FOUND,
+            0,
+          ),
+        );
       }
-      updateMontajeDto.estado = false;
-      await this.montajeRepository.update({ idMontaje }, updateMontajeDto);
-      return new MessageDto('Montaje eliminado');
+
+      await this.montajeRepository.update(idMontaje, updateMontajeDto);
+
+      return new MessageDto(
+        'Montaje actualizado correctamente',
+        'success',
+        HttpStatus.OK,
+        idMontaje,
+      );
     } catch (error) {
-      return new MessageDto(error);
+      throw new BadRequestException(
+        new MessageDto(
+          'Error al actualizar el montaje',
+          'error',
+          HttpStatus.BAD_REQUEST,
+          0,
+        ),
+      );
     }
   }
 
-  // ======== Actualizar montaje
-  async update(idMontaje: number, updateMontajeDto: UpdateMontajeDto) {
+  // ======== Eliminar un montaje (cambio de estado en lugar de borrado físico)
+  async delete(idMontaje: number): Promise<MessageDto> {
     try {
-      const montaje = await this.montajeRepository.find({
-        where: { idMontaje: idMontaje },
+      const montaje = await this.montajeRepository.findOne({
+        where: { idMontaje },
       });
+
       if (!montaje) {
-        throw new BadRequestException(new MessageDto('Montaje no encontrado'));
+        throw new BadRequestException(
+          new MessageDto(
+            'Montaje no encontrado',
+            'error',
+            HttpStatus.NOT_FOUND,
+            0,
+          ),
+        );
       }
-      await this.montajeRepository.update({ idMontaje }, updateMontajeDto);
-      return new MessageDto('Montaje actualizado');
+
+      await this.montajeRepository.update(idMontaje, { estado: false });
+
+      return new MessageDto(
+        'Montaje eliminado correctamente',
+        'success',
+        HttpStatus.OK,
+        idMontaje,
+      );
     } catch (error) {
-      return new MessageDto(error);
+      throw new BadRequestException(
+        new MessageDto(
+          'Error al eliminar el montaje',
+          'error',
+          HttpStatus.BAD_REQUEST,
+          0,
+        ),
+      );
     }
   }
 }

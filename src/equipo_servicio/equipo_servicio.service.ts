@@ -1,4 +1,4 @@
-import { BadRequestException, Injectable } from '@nestjs/common';
+import { BadRequestException, Injectable, HttpStatus } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { EquipoServicioEntity } from './equipo_servicio.entity';
 import { Repository } from 'typeorm';
@@ -13,81 +13,159 @@ export class EquipoServicioService {
     private readonly equipoRepository: Repository<EquipoServicioEntity>,
   ) {}
 
-  // ======= Listar todos los equipos
-  async getList() {
+  // ======= Listar todos los equipos de servicio
+  async getList(): Promise<EquipoServicioEntity[]> {
     try {
       return await this.equipoRepository.find({
         where: { estado: true },
         relations: ['tipoEquipo', 'tipoContratacion'],
       });
     } catch (error) {
-      return new MessageDto(error);
+      throw new BadRequestException(
+        new MessageDto(
+          'Error al obtener la lista de equipos de servicio',
+          'error',
+          HttpStatus.BAD_REQUEST,
+          0,
+        ),
+      );
     }
   }
 
-  // ======= Listar equipo por id
-  async getById(idEquipo: number) {
+  // ======= Obtener equipo de servicio por ID
+  async getById(idEquipo: number): Promise<EquipoServicioEntity> {
     try {
-      const equipo = await this.equipoRepository.find({
-        where: { idEquipo: idEquipo, estado: true },
+      const equipo = await this.equipoRepository.findOne({
+        where: { idEquipo, estado: true },
         relations: ['tipoEquipo', 'tipoContratacion'],
       });
+
       if (!equipo) {
         throw new BadRequestException(
-          new MessageDto('No sea a encontrado el equipo'),
+          new MessageDto(
+            'Equipo de servicio no encontrado',
+            'error',
+            HttpStatus.NOT_FOUND,
+            0,
+          ),
         );
       }
+
       return equipo;
     } catch (error) {
-      return new MessageDto(error);
+      throw new BadRequestException(
+        new MessageDto(
+          'Error al obtener el equipo de servicio',
+          'error',
+          HttpStatus.BAD_REQUEST,
+          0,
+        ),
+      );
     }
   }
 
-  // ======== Crear equipo
-  async create(createEquipoServicioDto: CreateEquipoServicioDto) {
+  // ======== Crear un nuevo equipo de servicio
+  async create(
+    createEquipoServicioDto: CreateEquipoServicioDto,
+  ): Promise<MessageDto> {
     try {
       const equipo = this.equipoRepository.create(createEquipoServicioDto);
-      await this.equipoRepository.save(equipo);
-      return new MessageDto('Equipo de servicio registrado');
+      const savedEquipo = await this.equipoRepository.save(equipo);
+
+      return new MessageDto(
+        'Equipo de servicio registrado correctamente',
+        'success',
+        HttpStatus.CREATED,
+        savedEquipo.idEquipo,
+      );
     } catch (error) {
-      return new MessageDto(error);
+      throw new BadRequestException(
+        new MessageDto(
+          'Error al registrar el equipo de servicio',
+          'error',
+          HttpStatus.BAD_REQUEST,
+          0,
+        ),
+      );
     }
   }
 
-  // ======== Eliminar equipo
-  async delete(idEquipo: number, updateEquipoDto: UpdateEquipoServicioDto) {
+  // ======== Actualizar un equipo de servicio existente
+  async update(
+    idEquipo: number,
+    updateEquipoDto: UpdateEquipoServicioDto,
+  ): Promise<MessageDto> {
     try {
-      const equipo = await this.equipoRepository.find({
-        where: { idEquipo: idEquipo },
+      const equipo = await this.equipoRepository.findOne({
+        where: { idEquipo },
       });
+
       if (!equipo) {
         throw new BadRequestException(
-          new MessageDto('Equipo de servicio no encontrado'),
+          new MessageDto(
+            'Equipo de servicio no encontrado',
+            'error',
+            HttpStatus.NOT_FOUND,
+            0,
+          ),
         );
       }
-      updateEquipoDto.estado = false;
-      await this.equipoRepository.update({ idEquipo }, updateEquipoDto);
-      return new MessageDto('Equipo de servicio eliminado');
+
+      await this.equipoRepository.update(idEquipo, updateEquipoDto);
+
+      return new MessageDto(
+        'Equipo de servicio actualizado correctamente',
+        'success',
+        HttpStatus.OK,
+        idEquipo,
+      );
     } catch (error) {
-      return new MessageDto(error);
+      throw new BadRequestException(
+        new MessageDto(
+          'Error al actualizar el equipo de servicio',
+          'error',
+          HttpStatus.BAD_REQUEST,
+          0,
+        ),
+      );
     }
   }
 
-  // ======== Actualizar equipo
-  async update(idEquipo: number, updateEquipoDto: UpdateEquipoServicioDto) {
+  // ======== Eliminar un equipo de servicio (cambio de estado en lugar de borrado físico)
+  async delete(idEquipo: number): Promise<MessageDto> {
     try {
-      const equipo = await this.equipoRepository.find({
-        where: { idEquipo: idEquipo },
+      const equipo = await this.equipoRepository.findOne({
+        where: { idEquipo },
       });
+
       if (!equipo) {
         throw new BadRequestException(
-          new MessageDto('Equipo de servicio no encontrado'),
+          new MessageDto(
+            'Equipo de servicio no encontrado',
+            'error',
+            HttpStatus.NOT_FOUND,
+            0,
+          ),
         );
       }
-      await this.equipoRepository.update({ idEquipo }, updateEquipoDto);
-      return new MessageDto('Equipo de servicio actualizado');
+
+      await this.equipoRepository.update(idEquipo, { estado: false });
+
+      return new MessageDto(
+        'Equipo de servicio eliminado correctamente',
+        'success',
+        HttpStatus.OK,
+        idEquipo,
+      );
     } catch (error) {
-      return new MessageDto(error);
+      throw new BadRequestException(
+        new MessageDto(
+          'Error al eliminar el equipo de servicio',
+          'error',
+          HttpStatus.BAD_REQUEST,
+          0,
+        ),
+      );
     }
   }
 }

@@ -45,10 +45,7 @@ export class LocalController {
 
   // ======== Eliminar un local (eliminación lógica)
   @Delete(':id')
-  async delete(
-    @Param('id', ParseIntPipe) idLocal: number,
-    @Body() updateLocalDto: UpdateLocalDto,
-  ) {
-    return await this.localService.delete(idLocal, updateLocalDto);
+  async delete(@Param('id', ParseIntPipe) idLocal: number) {
+    return await this.localService.delete(idLocal);
   }
 }

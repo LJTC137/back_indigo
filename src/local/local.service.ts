@@ -1,4 +1,4 @@
-import { BadRequestException, Injectable } from '@nestjs/common';
+import { BadRequestException, Injectable, HttpStatus } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { LocalEntity } from './local.entity';
 import { Repository } from 'typeorm';
@@ -14,77 +14,152 @@ export class LocalService {
   ) {}
 
   // ======= Listar todos los locales
-  async getList() {
+  async getList(): Promise<LocalEntity[]> {
     try {
       return await this.localRepository.find({
         where: { estado: true },
         relations: ['tipoLocal', 'estadoDisponibilidad'],
       });
     } catch (error) {
-      return new MessageDto(error);
+      throw new BadRequestException(
+        new MessageDto(
+          'Error al obtener la lista de locales',
+          'error',
+          HttpStatus.BAD_REQUEST,
+          0,
+        ),
+      );
     }
   }
 
-  // ======= Listar local por id
-  async getById(idLocal: number) {
+  // ======= Obtener local por ID
+  async getById(idLocal: number): Promise<LocalEntity> {
     try {
-      const local = await this.localRepository.find({
-        where: { idLocal: idLocal, estado: true },
+      const local = await this.localRepository.findOne({
+        where: { idLocal, estado: true },
         relations: ['tipoLocal', 'estadoDisponibilidad'],
       });
+
       if (!local) {
         throw new BadRequestException(
-          new MessageDto('No sea a encontrado el local'),
+          new MessageDto(
+            'Local no encontrado',
+            'error',
+            HttpStatus.NOT_FOUND,
+            0,
+          ),
         );
       }
+
       return local;
     } catch (error) {
-      return new MessageDto(error);
+      throw new BadRequestException(
+        new MessageDto(
+          'Error al obtener el local',
+          'error',
+          HttpStatus.BAD_REQUEST,
+          0,
+        ),
+      );
     }
   }
 
-  // ======== Crear local
-  async create(createLocalDto: CreateLocalDto) {
+  // ======== Crear un nuevo local
+  async create(createLocalDto: CreateLocalDto): Promise<MessageDto> {
     try {
       const local = this.localRepository.create(createLocalDto);
-      console.log(local);
-      await this.localRepository.save(local);
-      return new MessageDto('Local registrado');
+      const savedLocal = await this.localRepository.save(local);
+
+      return new MessageDto(
+        'Local registrado correctamente',
+        'success',
+        HttpStatus.CREATED,
+        savedLocal.idLocal,
+      );
     } catch (error) {
-      return new MessageDto(error);
+      throw new BadRequestException(
+        new MessageDto(
+          'Error al registrar el local',
+          'error',
+          HttpStatus.BAD_REQUEST,
+          0,
+        ),
+      );
     }
   }
 
-  // ======== Eliminar local
-  async delete(idLocal: number, updateLocalDto: UpdateLocalDto) {
+  // ======== Actualizar un local existente
+  async update(
+    idLocal: number,
+    updateLocalDto: UpdateLocalDto,
+  ): Promise<MessageDto> {
     try {
-      const local = await this.localRepository.find({
-        where: { idLocal: idLocal },
-      });
+      const local = await this.localRepository.findOne({ where: { idLocal } });
+
       if (!local) {
-        throw new BadRequestException(new MessageDto('Local no encontrado'));
+        throw new BadRequestException(
+          new MessageDto(
+            'Local no encontrado',
+            'error',
+            HttpStatus.NOT_FOUND,
+            0,
+          ),
+        );
       }
-      updateLocalDto.estado = false;
-      await this.localRepository.update({ idLocal }, updateLocalDto);
-      return new MessageDto('Local eliminado');
+
+      await this.localRepository.update(idLocal, updateLocalDto);
+
+      return new MessageDto(
+        'Local actualizado correctamente',
+        'success',
+        HttpStatus.OK,
+        idLocal,
+      );
     } catch (error) {
-      return new MessageDto(error);
+      throw new BadRequestException(
+        new MessageDto(
+          'Error al actualizar el local',
+          'error',
+          HttpStatus.BAD_REQUEST,
+          0,
+        ),
+      );
     }
   }
 
-  // ======== Actualizar local
-  async update(idLocal: number, updateLocalDto: UpdateLocalDto) {
+  // ======== Eliminar un local (cambio de estado en lugar de borrado físico)
+  async delete(idLocal: number): Promise<MessageDto> {
     try {
-      const local = await this.localRepository.find({
-        where: { idLocal: idLocal },
-      });
+      const local = await this.localRepository.findOne({ where: { idLocal } });
+
       if (!local) {
-        throw new BadRequestException(new MessageDto('Local no encontrado'));
+        throw new BadRequestException(
+          new MessageDto(
+            'Local no encontrado',
+            'error',
+            HttpStatus.NOT_FOUND,
+            0,
+          ),
+        );
       }
-      await this.localRepository.update({ idLocal }, updateLocalDto);
-      return new MessageDto('Local actualizado');
+
+      await this.localRepository.update(idLocal, { estado: false });
+
+      return new MessageDto(
+        'Local eliminado correctamente',
+        'success',
+        HttpStatus.OK,
+        idLocal,
+      );
     } catch (error) {
-      return new MessageDto(error);
+      throw new BadRequestException(
+        new MessageDto(
+          'Error al eliminar el local',
+          'error',
+          HttpStatus.BAD_REQUEST,
+          0,
+        ),
+      );
     }
   }
 }

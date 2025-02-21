@@ -1,4 +1,4 @@
-import { BadRequestException, Injectable } from '@nestjs/common';
+import { BadRequestException, Injectable, HttpStatus } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { AdornoEntity } from './adorno.entity';
 import { In, Repository } from 'typeorm';
@@ -22,98 +22,126 @@ export class AdornoService {
   ) {}
 
   // ======= Listar todos los adornos
-  async getList() {
+  async getList(): Promise<AdornoEntity[]> {
     try {
       return await this.adornoRepository.find({
         where: { estado: true },
         relations: ['tipoAdorno', 'adornoColor'],
       });
     } catch (error) {
-      return new MessageDto(error.message || 'Error al obtener la lista');
+      throw new BadRequestException(
+        new MessageDto(
+          'Error al obtener la lista de adornos',
+          'error',
+          HttpStatus.BAD_REQUEST,
+          0,
+        ),
+      );
     }
   }
 
   // ======= Obtener adorno por ID
-  async getById(idAdorno: number) {
+  async getById(idAdorno: number): Promise<AdornoEntity> {
     try {
       const adorno = await this.adornoRepository.findOne({
-        where: { idAdorno: idAdorno, estado: true },
+        where: { idAdorno, estado: true },
         relations: ['tipoAdorno', 'adornoColor'],
       });
+
       if (!adorno) {
-        throw new BadRequestException(new MessageDto('Adorno no encontrado'));
+        throw new BadRequestException(
+          new MessageDto(
+            'Adorno no encontrado',
+            'error',
+            HttpStatus.NOT_FOUND,
+            0,
+          ),
+        );
       }
+
       return adorno;
     } catch (error) {
-      return new MessageDto(error.message || 'Error al obtener el adorno');
+      throw new BadRequestException(
+        new MessageDto(
+          'Error al obtener el adorno',
+          'error',
+          HttpStatus.BAD_REQUEST,
+          0,
+        ),
+      );
     }
   }
 
-  async create(createAdornoDto: CreateAdornoDto) {
+  // ======= Crear un nuevo adorno
+  async create(createAdornoDto: CreateAdornoDto): Promise<MessageDto> {
     try {
       const tipoAdorno = await this.catalogoRepository.findOne({
         where: { idCatalogo: createAdornoDto.tipoAdorno.idCatalogo },
       });
 
       if (!tipoAdorno) {
-        throw new BadRequestException('El tipo de adorno no existe');
+        throw new BadRequestException(
+          new MessageDto(
+            'El tipo de adorno no existe',
+            'error',
+            HttpStatus.BAD_REQUEST,
+            0,
+          ),
+        );
       }
 
       let colores: ColorEntity[] = [];
       if (
-        Array.isArray(createAdornoDto.adornoColor) &&
+        createAdornoDto.adornoColor &&
         createAdornoDto.adornoColor.length > 0
       ) {
-        colores = await this.colorRepository.findBy({
-          idColor: In(createAdornoDto.adornoColor),
+        colores = await this.colorRepository.find({
+          where: { idColor: In(createAdornoDto.adornoColor) },
         });
 
         if (colores.length !== createAdornoDto.adornoColor.length) {
-          throw new BadRequestException('Uno o más colores no existen');
+          throw new BadRequestException(
+            new MessageDto(
+              'Uno o más colores no existen',
+              'error',
+              HttpStatus.BAD_REQUEST,
+              0,
+            ),
+          );
         }
       }
 
       const adorno = this.adornoRepository.create({
-        descripcion: createAdornoDto.descripcion,
-        nombre: createAdornoDto.nombre,
-        estado: createAdornoDto.estado,
-        dimensiones: createAdornoDto.dimensiones,
-        precioUnitario: createAdornoDto.precioUnitario,
-        cantidad: createAdornoDto.cantidad,
-        tipoAdorno: tipoAdorno,
+        ...createAdornoDto,
+        tipoAdorno,
         adornoColor: colores,
       });
 
-      await this.adornoRepository.save(adorno);
+      const savedAdorno = await this.adornoRepository.save(adorno);
 
-      return new MessageDto('Adorno registrado correctamente');
+      return new MessageDto(
+        'Adorno registrado correctamente',
+        'success',
+        HttpStatus.CREATED,
+        savedAdorno.idAdorno,
+      );
     } catch (error) {
-      console.error(error);
-      return new MessageDto(error.message || 'Error al registrar el adorno');
+      throw new BadRequestException(
+        new MessageDto(
+          'Error al registrar el adorno',
+          'error',
+          HttpStatus.BAD_REQUEST,
+          0,
+        ),
+      );
     }
   }
 
-  // ======== Eliminar adorno (cambia el estado a false)
-  async delete(idAdorno: number) {
-    try {
-      const adorno = await this.adornoRepository.findOne({
-        where: { idAdorno: idAdorno },
-      });
-
-      if (!adorno) {
-        throw new BadRequestException(new MessageDto('Adorno no encontrado'));
-      }
-
-      adorno.estado = false;
-      await this.adornoRepository.save(adorno);
-
-      return new MessageDto('Adorno eliminado correctamente');
-    } catch (error) {
-      return new MessageDto(error.message || 'Error al eliminar el adorno');
-    }
-  }
-
-  async update(idAdorno: number, updateAdornoDto: UpdateAdornoDto) {
+  // ======= Actualizar un adorno existente
+  async update(
+    idAdorno: number,
+    updateAdornoDto: UpdateAdornoDto,
+  ): Promise<MessageDto> {
     try {
       let adorno = await this.adornoRepository.findOne({
         where: { idAdorno },
@@ -121,57 +149,119 @@ export class AdornoService {
       });
 
       if (!adorno) {
-        throw new BadRequestException(new MessageDto('Adorno no encontrado'));
+        throw new BadRequestException(
+          new MessageDto(
+            'Adorno no encontrado',
+            'error',
+            HttpStatus.NOT_FOUND,
+            0,
+          ),
+        );
       }
 
-      const { adornoColor, tipoAdorno, ...adornoData } = updateAdornoDto;
-
-      await this.adornoRepository.update(idAdorno, adornoData);
-
-      adorno = await this.adornoRepository.findOne({
-        where: { idAdorno },
-        relations: ['adornoColor'],
-      });
-
-      if (tipoAdorno) {
-        console.log('🔹 Actualizando tipo de adorno...');
+      // Si hay un nuevo tipo de adorno, validamos y lo actualizamos
+      if (updateAdornoDto.tipoAdorno) {
         const tipoAdornoEntity = await this.catalogoRepository.findOne({
-          where: { idCatalogo: tipoAdorno.idCatalogo },
+          where: { idCatalogo: updateAdornoDto.tipoAdorno.idCatalogo },
         });
 
         if (!tipoAdornoEntity) {
           throw new BadRequestException(
-            new MessageDto('Tipo de adorno no válido'),
+            new MessageDto(
+              'Tipo de adorno no válido',
+              'error',
+              HttpStatus.BAD_REQUEST,
+              0,
+            ),
           );
         }
 
         adorno.tipoAdorno = tipoAdornoEntity;
       }
 
-      if (adorno.adornoColor.length > 0) {
-        adorno.adornoColor = [];
-        await this.adornoRepository.save(adorno);
-      }
-
-      if (adornoColor && adornoColor.length > 0) {
+      // Si hay nuevos colores, validamos y los actualizamos
+      if (
+        updateAdornoDto.adornoColor &&
+        updateAdornoDto.adornoColor.length > 0
+      ) {
         const coloresRelacionados = await this.colorRepository.find({
-          where: { idColor: In(adornoColor.map((color) => color.idColor)) },
+          where: {
+            idColor: In(
+              updateAdornoDto.adornoColor.map((color) => color.idColor),
+            ),
+          },
         });
 
-        if (coloresRelacionados.length !== adornoColor.length) {
+        if (coloresRelacionados.length !== updateAdornoDto.adornoColor.length) {
           throw new BadRequestException(
-            new MessageDto('Uno o más colores no existen'),
+            new MessageDto(
+              'Uno o más colores no existen',
+              'error',
+              HttpStatus.BAD_REQUEST,
+              0,
+            ),
           );
         }
 
         adorno.adornoColor = coloresRelacionados;
       }
+
+      // Actualizamos los demás datos del adorno
+      await this.adornoRepository.update(idAdorno, updateAdornoDto);
       await this.adornoRepository.save(adorno);
 
-      return new MessageDto('Adorno actualizado correctamente');
+      return new MessageDto(
+        'Adorno actualizado correctamente',
+        'success',
+        HttpStatus.OK,
+        idAdorno,
+      );
     } catch (error) {
       throw new BadRequestException(
-        new MessageDto(error.message || 'Error al actualizar el adorno'),
+        new MessageDto(
+          'Error al actualizar el adorno',
+          'error',
+          HttpStatus.BAD_REQUEST,
+          0,
+        ),
+      );
+    }
+  }
+
+  // ======== Eliminar un adorno (cambio de estado en lugar de borrado físico)
+  async delete(idAdorno: number): Promise<MessageDto> {
+    try {
+      const adorno = await this.adornoRepository.findOne({
+        where: { idAdorno },
+      });
+
+      if (!adorno) {
+        throw new BadRequestException(
+          new MessageDto(
+            'Adorno no encontrado',
+            'error',
+            HttpStatus.NOT_FOUND,
+            0,
+          ),
+        );
+      }
+
+      await this.adornoRepository.update(idAdorno, { estado: false });
+
+      return new MessageDto(
+        'Adorno eliminado correctamente',
+        'success',
+        HttpStatus.OK,
+        idAdorno,
+      );
+    } catch (error) {
+      throw new BadRequestException(
+        new MessageDto(
+          'Error al eliminar el adorno',
+          'error',
+          HttpStatus.BAD_REQUEST,
+          0,
+        ),
       );
     }
   }

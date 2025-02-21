@@ -45,10 +45,7 @@ export class MontajeController {
 
   // ======== Eliminar un montaje (eliminación lógica)
   @Delete(':id')
-  async delete(
-    @Param('id', ParseIntPipe) idMontaje: number,
-    @Body() updateMontajeDto: UpdateMontajeDto,
-  ) {
-    return await this.montajeService.delete(idMontaje, updateMontajeDto);
+  async delete(@Param('id', ParseIntPipe) idMontaje: number) {
+    return await this.montajeService.delete(idMontaje);
   }
 }

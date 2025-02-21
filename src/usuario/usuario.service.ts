@@ -1,8 +1,8 @@
 import {
   BadRequestException,
   Injectable,
-  InternalServerErrorException,
   NotFoundException,
+  HttpStatus,
 } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { TipoUsuarioEntity } from 'src/tipo_usuario/tipo_usuario.entity';
@@ -10,7 +10,6 @@ import { UsuarioEntity } from './usuario.entity';
 import { In, Repository } from 'typeorm';
 import { MessageDto } from 'src/common/message.dto';
 import { CreateUsuarioDto } from './dto/create-user.dto';
-import { TipoEnum } from 'src/tipo_usuario/tipo_usuario.enum';
 import { UpdateUsuarioDto } from './dto/update-user.dto';
 
 @Injectable()
@@ -18,78 +17,215 @@ export class UsuarioService {
   constructor(
     @InjectRepository(TipoUsuarioEntity)
     private readonly tipoUsuarioRepository: Repository<TipoUsuarioEntity>,
+
     @InjectRepository(UsuarioEntity)
     private readonly usuarioRepository: Repository<UsuarioEntity>,
   ) {}
 
+  // ======= Obtener lista de usuarios
   async getUsuariosList(): Promise<UsuarioEntity[]> {
-    const usuarios = await this.usuarioRepository.find();
-    if (!usuarios.length)
-      throw new NotFoundException(
-        new MessageDto('No existe un listado de usuarios'),
+    try {
+      const usuarios = await this.usuarioRepository.find();
+      if (!usuarios.length) {
+        throw new NotFoundException(
+          new MessageDto(
+            'No existe un listado de usuarios',
+            'error',
+            HttpStatus.NOT_FOUND,
+            0,
+          ),
+        );
+      }
+      return usuarios;
+    } catch (error) {
+      throw new BadRequestException(
+        new MessageDto(
+          'Error al obtener la lista de usuarios',
+          'error',
+          HttpStatus.BAD_REQUEST,
+          0,
+        ),
       );
-    return usuarios;
-  }
-
-  async getUsuarioById(idUsuario: number) {
-    return await this.usuarioRepository.findOne({
-      where: {
-        idUsuario,
-      },
-    });
-  }
-
-  async deleteUsuario(idUsuario: number) {
-    return this.usuarioRepository.delete({ idUsuario });
-  }
-
-  async updateUsuario(idUsuario: number, usuario: UpdateUsuarioDto) {
-    const { tipo_usuario, ...updateData } = usuario;
-
-    await this.usuarioRepository.update(idUsuario, updateData);
-
-    const usuarioExistente = await this.usuarioRepository.findOne({
-      where: { idUsuario },
-      relations: ['tipo_usuario'],
-    });
-
-    if (!usuarioExistente) {
-      throw new Error('Usuario no encontrado');
     }
+  }
 
-    if (tipo_usuario && tipo_usuario.length > 0) {
-      const tiposUsuario = await this.tipoUsuarioRepository.find({
-        where: { idTipoUsuario: In(tipo_usuario.map((t) => t.idTipoUsuario)) },
+  // ======= Obtener usuario por ID
+  async getUsuarioById(idUsuario: number): Promise<UsuarioEntity> {
+    try {
+      const usuario = await this.usuarioRepository.findOne({
+        where: { idUsuario },
+        relations: ['tipo_usuario'],
       });
 
-      if (tiposUsuario.length === 0) {
-        throw new Error('Tipo de usuario no encontrado');
+      if (!usuario) {
+        throw new NotFoundException(
+          new MessageDto(
+            'Usuario no encontrado',
+            'error',
+            HttpStatus.NOT_FOUND,
+            0,
+          ),
+        );
       }
 
-      usuarioExistente.tipo_usuario = tiposUsuario;
-      await this.usuarioRepository.save(usuarioExistente);
-    } else {
-      usuarioExistente.tipo_usuario = [];
-      await this.usuarioRepository.save(usuarioExistente);
+      return usuario;
+    } catch (error) {
+      throw new BadRequestException(
+        new MessageDto(
+          'Error al obtener el usuario',
+          'error',
+          HttpStatus.BAD_REQUEST,
+          0,
+        ),
+      );
     }
-
-    return usuarioExistente;
   }
 
-  async createUsuario(usuario: CreateUsuarioDto): Promise<any> {
-    const { identificacion, correo } = usuario;
-    console.log(usuario);
+  // ======= Eliminar usuario (cambio de estado en lugar de borrado físico)
+  async deleteUsuario(idUsuario: number): Promise<MessageDto> {
+    try {
+      const usuario = await this.usuarioRepository.findOne({
+        where: { idUsuario },
+      });
 
-    const exists = await this.usuarioRepository.findOne({
-      where: [{ identificacion: identificacion }, { correo: correo }],
-    });
-    if (exists) {
-      throw new BadRequestException(new MessageDto('Usuario ya registrado'));
+      if (!usuario) {
+        throw new NotFoundException(
+          new MessageDto(
+            'Usuario no encontrado',
+            'error',
+            HttpStatus.NOT_FOUND,
+            0,
+          ),
+        );
+      }
+
+      await this.usuarioRepository.update(idUsuario, { estado: false });
+
+      return new MessageDto(
+        'Usuario eliminado correctamente',
+        'success',
+        HttpStatus.OK,
+        idUsuario,
+      );
+    } catch (error) {
+      throw new BadRequestException(
+        new MessageDto(
+          'Error al eliminar el usuario',
+          'error',
+          HttpStatus.BAD_REQUEST,
+          0,
+        ),
+      );
     }
+  }
 
-    const user = this.usuarioRepository.create(usuario);
+  // ======= Actualizar usuario
+  async updateUsuario(
+    idUsuario: number,
+    usuarioDto: UpdateUsuarioDto,
+  ): Promise<MessageDto> {
+    try {
+      const usuario = await this.usuarioRepository.findOne({
+        where: { idUsuario },
+        relations: ['tipo_usuario'],
+      });
 
-    await this.usuarioRepository.save(user);
-    return new MessageDto('Cliente creado');
+      if (!usuario) {
+        throw new NotFoundException(
+          new MessageDto(
+            'Usuario no encontrado',
+            'error',
+            HttpStatus.NOT_FOUND,
+            0,
+          ),
+        );
+      }
+
+      const { tipo_usuario, ...updateData } = usuarioDto;
+      await this.usuarioRepository.update(idUsuario, updateData);
+
+      // Actualizar tipo de usuario si es necesario
+      if (tipo_usuario && tipo_usuario.length > 0) {
+        const tiposUsuario = await this.tipoUsuarioRepository.find({
+          where: {
+            idTipoUsuario: In(tipo_usuario.map((t) => t.idTipoUsuario)),
+          },
+        });
+
+        if (tiposUsuario.length !== tipo_usuario.length) {
+          throw new BadRequestException(
+            new MessageDto(
+              'Uno o más tipos de usuario no existen',
+              'error',
+              HttpStatus.BAD_REQUEST,
+              0,
+            ),
+          );
+        }
+
+        usuario.tipo_usuario = tiposUsuario;
+      } else {
+        usuario.tipo_usuario = [];
+      }
+
+      await this.usuarioRepository.save(usuario);
+
+      return new MessageDto(
+        'Usuario actualizado correctamente',
+        'success',
+        HttpStatus.OK,
+        idUsuario,
+      );
+    } catch (error) {
+      throw new BadRequestException(
+        new MessageDto(
+          'Error al actualizar el usuario',
+          'error',
+          HttpStatus.BAD_REQUEST,
+          0,
+        ),
+      );
+    }
+  }
+
+  // ======= Crear usuario
+  async createUsuario(usuarioDto: CreateUsuarioDto): Promise<MessageDto> {
+    try {
+      const { identificacion, correo } = usuarioDto;
+
+      const exists = await this.usuarioRepository.findOne({
+        where: [{ identificacion }, { correo }],
+      });
+
+      if (exists) {
+        throw new BadRequestException(
+          new MessageDto(
+            'Usuario ya registrado',
+            'error',
+            HttpStatus.BAD_REQUEST,
+            0,
+          ),
+        );
+      }
+
+      const user = this.usuarioRepository.create(usuarioDto);
+      const savedUser = await this.usuarioRepository.save(user);
+
+      return new MessageDto(
+        'Usuario creado correctamente',
+        'success',
+        HttpStatus.CREATED,
+        savedUser.idUsuario,
+      );
+    } catch (error) {
+      throw new BadRequestException(
+        new MessageDto(
+          'Error al registrar el usuario',
+          'error',
+          HttpStatus.BAD_REQUEST,
+          0,
+        ),
+      );
+    }
   }
 }

@@ -1,4 +1,4 @@
-import { BadRequestException, Injectable } from '@nestjs/common';
+import { BadRequestException, Injectable, HttpStatus } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { AlquilerEntity } from './alquiler.entity';
 import { Repository } from 'typeorm';
@@ -13,72 +13,153 @@ export class AlquilerService {
     private readonly alquilerRepository: Repository<AlquilerEntity>,
   ) {}
 
-  // ======= Listar todos los alquiler
-  async getList() {
+  // ======= Listar todos los alquileres
+  async getList(): Promise<AlquilerEntity[]> {
     try {
       return await this.alquilerRepository.find({ where: { estado: true } });
     } catch (error) {
-      return new MessageDto(error);
+      throw new BadRequestException(
+        new MessageDto(
+          'Error al obtener la lista de alquileres',
+          'error',
+          HttpStatus.BAD_REQUEST,
+          0,
+        ),
+      );
     }
   }
 
-  // ======= Listar alquiler por id
-  async getById(idAlquiler: number) {
+  // ======= Obtener alquiler por ID
+  async getById(idAlquiler: number): Promise<AlquilerEntity> {
     try {
-      const adorno = await this.alquilerRepository.find({
-        where: { idAlquiler: idAlquiler, estado: true },
+      const alquiler = await this.alquilerRepository.findOne({
+        where: { idAlquiler, estado: true },
       });
-      if (!adorno) {
+
+      if (!alquiler) {
         throw new BadRequestException(
-          new MessageDto('No sea a encontrado el adorno'),
+          new MessageDto(
+            'Alquiler no encontrado',
+            'error',
+            HttpStatus.NOT_FOUND,
+            0,
+          ),
         );
       }
-      return adorno;
+
+      return alquiler;
     } catch (error) {
-      return new MessageDto(error);
+      throw new BadRequestException(
+        new MessageDto(
+          'Error al obtener el alquiler',
+          'error',
+          HttpStatus.BAD_REQUEST,
+          0,
+        ),
+      );
     }
   }
 
-  // ======== Crear alquiler
-  async create(createAlquilerDto: CreateAlquilerDto) {
+  // ======== Crear un nuevo alquiler
+  async create(createAlquilerDto: CreateAlquilerDto): Promise<MessageDto> {
     try {
       const alquiler = this.alquilerRepository.create(createAlquilerDto);
-      return await this.alquilerRepository.save(alquiler);
+      const savedAlquiler = await this.alquilerRepository.save(alquiler);
+
+      return new MessageDto(
+        'Alquiler registrado correctamente',
+        'success',
+        HttpStatus.CREATED,
+        savedAlquiler.idAlquiler,
+      );
     } catch (error) {
-      return new MessageDto(error);
+      throw new BadRequestException(
+        new MessageDto(
+          'Error al registrar el alquiler',
+          'error',
+          HttpStatus.BAD_REQUEST,
+          0,
+        ),
+      );
     }
   }
 
-  // ======== Eliminar alquiker
-  async delete(idAlquiler: number, updateAlquilerDto: UpdateAlquilerDto) {
+  // ======== Actualizar un alquiler existente
+  async update(
+    idAlquiler: number,
+    updateAlquilerDto: UpdateAlquilerDto,
+  ): Promise<MessageDto> {
     try {
-      const alquiler = await this.alquilerRepository.find({
-        where: { idAlquiler: idAlquiler },
+      const alquiler = await this.alquilerRepository.findOne({
+        where: { idAlquiler },
       });
+
       if (!alquiler) {
-        throw new BadRequestException(new MessageDto('Alquiler no encontrado'));
+        throw new BadRequestException(
+          new MessageDto(
+            'Alquiler no encontrado',
+            'error',
+            HttpStatus.NOT_FOUND,
+            0,
+          ),
+        );
       }
-      updateAlquilerDto.estado = false;
-      await this.alquilerRepository.update({ idAlquiler }, updateAlquilerDto);
-      return new MessageDto('Alquiler eliminado');
+
+      await this.alquilerRepository.update(idAlquiler, updateAlquilerDto);
+
+      return new MessageDto(
+        'Alquiler actualizado correctamente',
+        'success',
+        HttpStatus.OK,
+        idAlquiler,
+      );
     } catch (error) {
-      return new MessageDto(error);
+      throw new BadRequestException(
+        new MessageDto(
+          'Error al actualizar el alquiler',
+          'error',
+          HttpStatus.BAD_REQUEST,
+          0,
+        ),
+      );
     }
   }
 
-  // ======== Actualizar alquiler
-  async update(idAlquiler: number, updateAlquiler: UpdateAlquilerDto) {
+  // ======== Eliminar un alquiler (cambio de estado en lugar de borrado físico)
+  async delete(idAlquiler: number): Promise<MessageDto> {
     try {
-      const alquiler = await this.alquilerRepository.find({
-        where: { idAlquiler: idAlquiler },
+      const alquiler = await this.alquilerRepository.findOne({
+        where: { idAlquiler },
       });
+
       if (!alquiler) {
-        throw new BadRequestException(new MessageDto('Alquiler no encontrado'));
+        throw new BadRequestException(
+          new MessageDto(
+            'Alquiler no encontrado',
+            'error',
+            HttpStatus.NOT_FOUND,
+            0,
+          ),
+        );
       }
-      await this.alquilerRepository.update({ idAlquiler }, updateAlquiler);
-      return new MessageDto('Alquiler actualizado');
+
+      await this.alquilerRepository.update(idAlquiler, { estado: false });
+
+      return new MessageDto(
+        'Alquiler eliminado correctamente',
+        'success',
+        HttpStatus.OK,
+        idAlquiler,
+      );
     } catch (error) {
-      return new MessageDto(error);
+      throw new BadRequestException(
+        new MessageDto(
+          'Error al eliminar el alquiler',
+          'error',
+          HttpStatus.BAD_REQUEST,
+          0,
+        ),
+      );
     }
   }
 }

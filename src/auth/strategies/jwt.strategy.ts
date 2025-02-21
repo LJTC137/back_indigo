@@ -7,7 +7,7 @@ import { Repository } from 'typeorm';
 import { ConfigService } from '@nestjs/config';
 import { JWT_SECRET } from 'src/config/constants';
 import { PayloadInterface } from '../payload.interface';
-import { MessageDto } from 'src/common/message.dto';
+import { MessageResponseDto } from 'src/common/message-response.dto';
 
 @Injectable()
 export class JwtStrategy extends PassportStrategy(Strategy) {
@@ -30,7 +30,7 @@ export class JwtStrategy extends PassportStrategy(Strategy) {
     });
     if (!usuario) {
       return new UnauthorizedException(
-        new MessageDto('Credenciales incorrectas'),
+        new MessageResponseDto('Credenciales incorrectas'),
       );
     }
     return payload;

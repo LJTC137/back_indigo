@@ -45,10 +45,7 @@ export class CatalogoController {
 
   // ======== Eliminar un catálogo (eliminación lógica)
   @Delete(':id')
-  async delete(
-    @Param('id', ParseIntPipe) idCatalogo: number,
-    @Body() updateCatalogoDto: UpdateCatalogoDto,
-  ) {
-    return await this.catalogoService.delete(idCatalogo, updateCatalogoDto);
+  async delete(@Param('id', ParseIntPipe) idCatalogo: number) {
+    return await this.catalogoService.delete(idCatalogo);
   }
 }

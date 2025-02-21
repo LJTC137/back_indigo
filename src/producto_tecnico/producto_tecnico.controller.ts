@@ -51,12 +51,10 @@ export class ProductoTecnicoController {
   // ======== Eliminar un producto técnico (eliminación lógica)
   @Delete(':id')
   async delete(
-    @Param('id', ParseIntPipe) idProducto: number,
-    @Body() updateProductoTecnicoDto: UpdateProductoTecnicoDto,
+    @Param('id', ParseIntPipe) idProducto: number
   ) {
     return await this.productoTecnicoService.delete(
       idProducto,
-      updateProductoTecnicoDto,
     );
   }
 }

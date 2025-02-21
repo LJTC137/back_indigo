@@ -45,10 +45,7 @@ export class AsesorController {
 
   // ======== Eliminar un asesor
   @Delete(':id')
-  async delete(
-    @Param('id', ParseIntPipe) idAsesor: number,
-    @Body() updateAsesorDto: UpdateAsesorDto,
-  ) {
-    return await this.asesorService.delete(idAsesor, updateAsesorDto);
+  async delete(@Param('id', ParseIntPipe) idAsesor: number) {
+    return await this.asesorService.delete(idAsesor);
   }
 }

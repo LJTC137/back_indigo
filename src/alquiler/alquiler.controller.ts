@@ -45,10 +45,7 @@ export class AlquilerController {
 
   // ======== Eliminar un alquiler
   @Delete(':id')
-  async delete(
-    @Param('id', ParseIntPipe) idAlquiler: number,
-    @Body() updateAlquilerDto: UpdateAlquilerDto,
-  ) {
-    return await this.alquilerService.delete(idAlquiler, updateAlquilerDto);
+  async delete(@Param('id', ParseIntPipe) idAlquiler: number) {
+    return await this.alquilerService.delete(idAlquiler);
   }
 }

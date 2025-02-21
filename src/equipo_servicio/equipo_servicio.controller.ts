@@ -45,10 +45,7 @@ export class EquipoServicioController {
 
   // ======== Eliminar un equipo (eliminación lógica)
   @Delete(':id')
-  async delete(
-    @Param('id', ParseIntPipe) idEquipo: number,
-    @Body() updateEquipoDto: UpdateEquipoServicioDto,
-  ) {
-    return await this.equipoServicioService.delete(idEquipo, updateEquipoDto);
+  async delete(@Param('id', ParseIntPipe) idEquipo: number) {
+    return await this.equipoServicioService.delete(idEquipo);
   }
 }

@@ -1,4 +1,4 @@
-import { BadRequestException, Injectable } from '@nestjs/common';
+import { BadRequestException, Injectable, HttpStatus } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { ColorEntity } from './color.entity';
 import { Repository } from 'typeorm';
@@ -13,77 +13,148 @@ export class ColorService {
     private readonly colorRepository: Repository<ColorEntity>,
   ) {}
 
-  // ======== Listar colores
-  async getList() {
+  // ======== Listar todos los colores
+  async getList(): Promise<ColorEntity[]> {
     try {
       return await this.colorRepository.find({ where: { estado: true } });
     } catch (error) {
-      return new MessageDto(error);
+      throw new BadRequestException(
+        new MessageDto(
+          'Error al obtener la lista de colores',
+          'error',
+          HttpStatus.BAD_REQUEST,
+          0,
+        ),
+      );
     }
   }
 
-  // ======== Listar colores
-  async getById(idColor: number) {
+  // ======== Obtener color por ID
+  async getById(idColor: number): Promise<ColorEntity> {
     try {
-      const color = await this.colorRepository.find({
-        where: { idColor: idColor },
+      const color = await this.colorRepository.findOne({
+        where: { idColor, estado: true },
       });
+
       if (!color) {
-        throw new BadRequestException(new MessageDto('Color no encontrado'));
+        throw new BadRequestException(
+          new MessageDto(
+            'Color no encontrado',
+            'error',
+            HttpStatus.NOT_FOUND,
+            0,
+          ),
+        );
       }
+
       return color;
     } catch (error) {
-      return new MessageDto(error);
+      throw new BadRequestException(
+        new MessageDto(
+          'Error al obtener el color',
+          'error',
+          HttpStatus.BAD_REQUEST,
+          0,
+        ),
+      );
     }
   }
 
-  // ======== Crear color
-  async crear(createColorDto: CreateColorDto) {
+  // ======== Crear un nuevo color
+  async create(createColorDto: CreateColorDto): Promise<MessageDto> {
     try {
       const color = this.colorRepository.create(createColorDto);
-      this.colorRepository.create(color);
-      await this.colorRepository.save(color);
-      return new MessageDto('Color registrado');
+      const savedColor = await this.colorRepository.save(color);
+
+      return new MessageDto(
+        'Color registrado con éxito',
+        'success',
+        HttpStatus.CREATED,
+        savedColor.idColor,
+      );
     } catch (error) {
-      return new MessageDto(error);
+      throw new BadRequestException(
+        new MessageDto(
+          'Error al registrar el color',
+          'error',
+          HttpStatus.BAD_REQUEST,
+          0,
+        ),
+      );
     }
   }
 
-  // ======== Eliminar color
-  async delete(idColor: number, updateColorDto: UpdateColorDto) {
-    try {
-      const color = await this.colorRepository.find({
-        where: { idColor: idColor },
-      });
-      if (!color) {
-        throw new BadRequestException(new MessageDto('Color no encontrado'));
-      }
-      updateColorDto.estado = false;
-      await this.colorRepository.update({ idColor }, updateColorDto);
-      return new MessageDto('Color eliminado');
-    } catch (error) {
-      return new MessageDto(error);
-    }
-  }
-
-  // ======== Actualizar color
-  async update(idColor: number, updateColorDto: UpdateColorDto) {
+  // ======== Actualizar un color existente
+  async update(
+    idColor: number,
+    updateColorDto: UpdateColorDto,
+  ): Promise<MessageDto> {
     try {
       const color = await this.colorRepository.findOne({ where: { idColor } });
 
       if (!color) {
-        throw new BadRequestException(new MessageDto('Color no encontrado'));
+        throw new BadRequestException(
+          new MessageDto(
+            'Color no encontrado',
+            'error',
+            HttpStatus.NOT_FOUND,
+            0,
+          ),
+        );
       }
+
       await this.colorRepository.update(idColor, updateColorDto);
 
-      const colorActualizado = await this.colorRepository.findOne({
-        where: { idColor },
-      });
-
-      return colorActualizado;
+      return new MessageDto(
+        'Color actualizado correctamente',
+        'success',
+        HttpStatus.OK,
+        idColor,
+      );
     } catch (error) {
       throw new BadRequestException(
-        new MessageDto(error.message || 'Error al actualizar el color'),
+        new MessageDto(
+          'Error al actualizar el color',
+          'error',
+          HttpStatus.BAD_REQUEST,
+          0,
+        ),
+      );
+    }
+  }
+
+  // ======== Eliminar un color (cambio de estado en lugar de borrado físico)
+  async delete(idColor: number): Promise<MessageDto> {
+    try {
+      const color = await this.colorRepository.findOne({ where: { idColor } });
+
+      if (!color) {
+        throw new BadRequestException(
+          new MessageDto(
+            'Color no encontrado',
+            'error',
+            HttpStatus.NOT_FOUND,
+            0,
+          ),
+        );
+      }
+
+      await this.colorRepository.update(idColor, { estado: false });
+
+      return new MessageDto(
+        'Color eliminado correctamente',
+        'success',
+        HttpStatus.OK,
+        idColor,
+      );
+    } catch (error) {
+      throw new BadRequestException(
+        new MessageDto(
+          'Error al eliminar el color',
+          'error',
+          HttpStatus.BAD_REQUEST,
+          0,
+        ),
       );
     }
   }

@@ -1,4 +1,4 @@
-import { BadRequestException, Injectable } from '@nestjs/common';
+import { BadRequestException, Injectable, HttpStatus } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { AlquilerXEquipoEntity } from './alquiler_x_equipo.entity';
 import { Repository } from 'typeorm';
@@ -14,81 +14,160 @@ export class AlquilerXEquipoService {
   ) {}
 
   // ======= Listar todos los alquilerXEquipo
-  async getList() {
+  async getList(): Promise<AlquilerXEquipoEntity[]> {
     try {
       return await this.alquilerXEquipoRepository.find();
     } catch (error) {
-      return new MessageDto(error);
+      throw new BadRequestException(
+        new MessageDto(
+          'Error al obtener la lista de equipos de servicio',
+          'error',
+          HttpStatus.BAD_REQUEST,
+          0,
+        ),
+      );
     }
   }
 
-  // ======= Listar alquilerXEquipo por id alquiler
-  async getByAlquilerId(idAlquiler: number) {
+  // ======= Listar alquilerXEquipo por id de alquiler
+  async getByAlquilerId(idAlquiler: number): Promise<AlquilerXEquipoEntity[]> {
     try {
-      const alquilerXEquipo = await this.alquilerXEquipoRepository.find({
-        where: { alquiler: { idAlquiler: idAlquiler } },
+      const equipos = await this.alquilerXEquipoRepository.find({
+        where: { alquiler: { idAlquiler } },
       });
-      if (!alquilerXEquipo) {
+
+      if (!equipos || equipos.length === 0) {
         throw new BadRequestException(
-          new MessageDto('No sea a encontrado el equipo de servicio'),
+          new MessageDto(
+            'No se encontraron equipos de servicio para este alquiler',
+            'error',
+            HttpStatus.NOT_FOUND,
+            0,
+          ),
         );
       }
-      return alquilerXEquipo;
+
+      return equipos;
     } catch (error) {
-      return new MessageDto(error);
+      throw new BadRequestException(
+        new MessageDto(
+          'Error al obtener los equipos de servicio',
+          'error',
+          HttpStatus.BAD_REQUEST,
+          0,
+        ),
+      );
     }
   }
 
   // ======== Crear alquilerXEquipo
-  async create(createAlquilerXEquipoDto: CreateAlquilerXEquipoDto) {
+  async create(
+    createAlquilerXEquipoDto: CreateAlquilerXEquipoDto,
+  ): Promise<MessageDto> {
     try {
       const alquilerXEquipo = this.alquilerXEquipoRepository.create(
         createAlquilerXEquipoDto,
       );
-      return await this.alquilerXEquipoRepository.save(alquilerXEquipo);
-    } catch (error) {
-      return new MessageDto(error);
-    }
-  }
+      const savedAlquilerXEquipo =
+        await this.alquilerXEquipoRepository.save(alquilerXEquipo);
 
-  // ======== Eliminar alquilerXEquipo
-  async delete(idAlquilerXEquipo: number) {
-    try {
-      const alquilerXEquipo = await this.alquilerXEquipoRepository.find({
-        where: { idAlquilerXEquipo: idAlquilerXEquipo },
-      });
-      if (!alquilerXEquipo) {
-        throw new BadRequestException(
-          new MessageDto('Equipo de servicio no encontrado'),
-        );
-      }
-      await this.alquilerXEquipoRepository.delete({ idAlquilerXEquipo });
+      return new MessageDto(
+        'Equipo de servicio registrado correctamente',
+        'success',
+        HttpStatus.CREATED,
+        savedAlquilerXEquipo.idAlquilerXEquipo,
+      );
     } catch (error) {
-      return new MessageDto(error);
+      throw new BadRequestException(
+        new MessageDto(
+          'Error al registrar el equipo de servicio',
+          'error',
+          HttpStatus.BAD_REQUEST,
+          0,
+        ),
+      );
     }
   }
 
   // ======== Actualizar alquilerXEquipo
   async update(
     idAlquilerXEquipo: number,
-    updateAlquilerXEquipo: UpdateAlquilerXEquipoDto,
-  ) {
+    updateAlquilerXEquipoDto: UpdateAlquilerXEquipoDto,
+  ): Promise<MessageDto> {
     try {
-      const alquilerXEquipo = await this.alquilerXEquipoRepository.find({
-        where: { idAlquilerXEquipo: idAlquilerXEquipo },
+      const alquilerXEquipo = await this.alquilerXEquipoRepository.findOne({
+        where: { idAlquilerXEquipo },
       });
+
       if (!alquilerXEquipo) {
         throw new BadRequestException(
-          new MessageDto('Equipo de servicio no encontrado'),
+          new MessageDto(
+            'Equipo de servicio no encontrado',
+            'error',
+            HttpStatus.NOT_FOUND,
+            0,
+          ),
         );
       }
+
       await this.alquilerXEquipoRepository.update(
-        { idAlquilerXEquipo },
-        updateAlquilerXEquipo,
+        idAlquilerXEquipo,
+        updateAlquilerXEquipoDto,
       );
-      return new MessageDto('Equipo de servicio actualizado');
+
+      return new MessageDto(
+        'Equipo de servicio actualizado correctamente',
+        'success',
+        HttpStatus.OK,
+        idAlquilerXEquipo,
+      );
     } catch (error) {
-      return new MessageDto(error);
+      throw new BadRequestException(
+        new MessageDto(
+          'Error al actualizar el equipo de servicio',
+          'error',
+          HttpStatus.BAD_REQUEST,
+          0,
+        ),
+      );
+    }
+  }
+
+  // ======== Eliminar alquilerXEquipo
+  async delete(idAlquilerXEquipo: number): Promise<MessageDto> {
+    try {
+      const alquilerXEquipo = await this.alquilerXEquipoRepository.findOne({
+        where: { idAlquilerXEquipo },
+      });
+
+      if (!alquilerXEquipo) {
+        throw new BadRequestException(
+          new MessageDto(
+            'Equipo de servicio no encontrado',
+            'error',
+            HttpStatus.NOT_FOUND,
+            0,
+          ),
+        );
+      }
+
+      await this.alquilerXEquipoRepository.delete(idAlquilerXEquipo);
+
+      return new MessageDto(
+        'Equipo de servicio eliminado correctamente',
+        'success',
+        HttpStatus.OK,
+        idAlquilerXEquipo,
+      );
+    } catch (error) {
+      throw new BadRequestException(
+        new MessageDto(
+          'Error al eliminar el equipo de servicio',
+          'error',
+          HttpStatus.BAD_REQUEST,
+          0,
+        ),
+      );
     }
   }
 }

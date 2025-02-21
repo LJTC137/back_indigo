@@ -31,7 +31,7 @@ export class ColorController {
   // ======== Crear un nuevo color
   @Post()
   async create(@Body() createColorDto: CreateColorDto) {
-    return await this.colorService.crear(createColorDto);
+    return await this.colorService.create(createColorDto);
   }
 
   // ======== Actualizar un color
@@ -45,10 +45,7 @@ export class ColorController {
 
   // ======== Eliminar un color (eliminación lógica)
   @Delete(':id')
-  async delete(
-    @Param('id', ParseIntPipe) idColor: number,
-    @Body() updateColorDto: UpdateColorDto,
-  ) {
-    return await this.colorService.delete(idColor, updateColorDto);
+  async delete(@Param('id', ParseIntPipe) idColor: number) {
+    return await this.colorService.delete(idColor);
   }
 }
