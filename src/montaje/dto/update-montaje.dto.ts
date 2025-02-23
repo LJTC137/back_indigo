@@ -43,7 +43,7 @@ import {
     @IsPositive({ message: 'El campo depósito reembolsable debe ser un valor positivo' })
     depositoReembolsable?: number;
   
-    tipoCobroId?;
-    tipoMontajeId?;
+    tipoCobro?;
+    tipoMontaje?;
   }
   

@@ -51,9 +51,9 @@ import {
     depositoReembolsable: number;
 
     @IsNotEmpty({ message: 'El montaje necesita un tipo de cobro registrado' })
-    tipoCobroId;
+    tipoCobro;
     
     @IsNotEmpty({ message: 'El montaje necesita un tipo de montaje registrado' })
-    tipoMontajeId;
+    tipoMontaje;
 }
   

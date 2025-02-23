@@ -31,7 +31,7 @@ import {
     @MaxLength(100, { message: 'El campo capacidad técnica no puede tener más de 100 caracteres' })
     capacidadTecnica?: string;
   
-    estadoEquipoId?;
-    tipoProductoId?;
+    estadoEquipo?;
+    tipoProducto?;
   }
   
