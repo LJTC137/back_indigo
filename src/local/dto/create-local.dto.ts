@@ -8,6 +8,7 @@ import {
 } from 'class-validator';
 
 export class CreateLocalDto {
+  idLocal: number;
   @IsNotEmpty({ message: 'El campo dirección no puede estar vacío' })
   @IsString({ message: 'El campo dirección debe ser una cadena de texto' })
   @MaxLength(50, {

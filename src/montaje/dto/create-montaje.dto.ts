@@ -8,6 +8,7 @@ import {
   } from 'class-validator';
   
   export class CreateMontajeDto {
+    idMontaje: number;
     @IsNotEmpty({ message: 'El campo nombre no puede estar vacío' })
     @IsString({ message: 'El campo nombre debe ser una cadena de texto' })
     @MaxLength(50, { message: 'El campo nombre no puede tener más de 50 caracteres' })

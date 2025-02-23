@@ -16,7 +16,10 @@ export class CatalogoService {
   // ======== Listar todos los catálogos
   async getList(): Promise<CatalogoEntity[]> {
     try {
-      return await this.catalogoRepository.find({ where: { estado: true } });
+      return await this.catalogoRepository.find({
+        where: { estado: true },
+        order: { nombreCatalogo: 'ASC' }, // Orden ascendente
+      });
     } catch (error) {
       throw new BadRequestException(
         new MessageDto(

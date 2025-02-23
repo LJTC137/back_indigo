@@ -25,6 +25,6 @@ import {
     @IsBoolean({ message: 'El campo estado solo puede ser un valor de verdadero o falso' })
     estado?: boolean;
   
-    tipoCateringId?;
+    tipoCatering?;
   }
   

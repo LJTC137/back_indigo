@@ -8,6 +8,7 @@ import {
 } from 'class-validator';
 
 export class CreateAsesorDto {
+  idAsesor: number;
   @IsBoolean({ message: 'El campo de disponibilidad solo puede ser un valor de si o no' })
   esDisponible: boolean;
 

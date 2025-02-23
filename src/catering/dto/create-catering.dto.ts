@@ -8,6 +8,7 @@ import {
   } from 'class-validator';
   
   export class CreateCateringDto {
+    idCatering: number;
     @IsNotEmpty({ message: 'El campo nombre del servicio no puede estar vacío' })
     @IsString({ message: 'El campo nombre del servicio debe ser una cadena de texto' })
     @MaxLength(50, { message: 'El campo nombre del servicio no puede tener más de 50 caracteres' })
@@ -27,6 +28,6 @@ import {
     estado: boolean;
   
     @IsNotEmpty({ message: 'El campo tipo de catering no puede estar vacío' })
-    tipoCateringId;
+    tipoCatering;
   }
   

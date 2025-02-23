@@ -8,6 +8,7 @@ import {
   } from 'class-validator';
   
   export class CreateEquipoServicioDto {
+    idEquipo: number;
     @IsNotEmpty({ message: 'El campo descripción no puede estar vacío' })
     @IsString({ message: 'El campo descripción debe ser una cadena de texto' })
     @MaxLength(250, { message: 'El campo descripción no puede tener más de 250 caracteres' })

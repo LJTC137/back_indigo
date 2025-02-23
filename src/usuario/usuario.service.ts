@@ -7,7 +7,7 @@ import {
 import { InjectRepository } from '@nestjs/typeorm';
 import { TipoUsuarioEntity } from 'src/tipo_usuario/tipo_usuario.entity';
 import { UsuarioEntity } from './usuario.entity';
-import { In, Repository } from 'typeorm';
+import { In, Not, Repository } from 'typeorm';
 import { MessageDto } from 'src/common/message.dto';
 import { CreateUsuarioDto } from './dto/create-user.dto';
 import { UpdateUsuarioDto } from './dto/update-user.dto';
@@ -141,10 +141,57 @@ export class UsuarioService {
         );
       }
 
-      const { tipo_usuario, ...updateData } = usuarioDto;
-      await this.usuarioRepository.update(idUsuario, updateData);
+      const { identificacion, correo, tipo_usuario, ...updateData } =
+        usuarioDto;
 
-      // Actualizar tipo de usuario si es necesario
+      if (identificacion && identificacion !== usuario.identificacion) {
+        const existsIdentificacion = await this.usuarioRepository.findOne({
+          where: { identificacion, idUsuario: Not(idUsuario) },
+        });
+
+        if (existsIdentificacion) {
+          throw new BadRequestException(
+            new MessageDto(
+              'La identificación ya está registrada en otro usuario',
+              'error',
+              HttpStatus.BAD_REQUEST,
+              0,
+            ),
+          );
+        }
+      }
+
+      if (correo && correo !== usuario.correo) {
+        const existsCorreo = await this.usuarioRepository.findOne({
+          where: { correo, idUsuario: Not(idUsuario) },
+        });
+
+        if (existsCorreo) {
+          throw new BadRequestException(
+            new MessageDto(
+              'El correo ya está registrado en otro usuario',
+              'error',
+              HttpStatus.BAD_REQUEST,
+              0,
+            ),
+          );
+        }
+      }
+
+      // ✅ Actualizar datos del usuario incluyendo identificacion y correo
+      await this.usuarioRepository.update(idUsuario, {
+        identificacion,
+        correo,
+        ...updateData,
+      });
+
+      // 🔹 Recuperamos el usuario actualizado
+      const usuarioActualizado = await this.usuarioRepository.findOne({
+        where: { idUsuario },
+        relations: ['tipo_usuario'],
+      });
+
+      // ✅ Mantener lógica de actualización de roles
       if (tipo_usuario && tipo_usuario.length > 0) {
         const tiposUsuario = await this.tipoUsuarioRepository.find({
           where: {
@@ -163,12 +210,11 @@ export class UsuarioService {
           );
         }
 
-        usuario.tipo_usuario = tiposUsuario;
-      } else {
-        usuario.tipo_usuario = [];
+        usuarioActualizado.tipo_usuario = tiposUsuario;
       }
 
-      await this.usuarioRepository.save(usuario);
+      // 🔹 Guardamos el usuario con los roles actualizados
+      await this.usuarioRepository.save(usuarioActualizado);
 
       return new MessageDto(
         'Usuario actualizado correctamente',
@@ -179,7 +225,7 @@ export class UsuarioService {
     } catch (error) {
       throw new BadRequestException(
         new MessageDto(
-          'Error al actualizar el usuario',
+          error.message || 'Error al actualizar el usuario',
           'error',
           HttpStatus.BAD_REQUEST,
           0,

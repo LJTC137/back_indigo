@@ -8,6 +8,7 @@ import {
   } from 'class-validator';
   
   export class CreateUsuarioDto {
+    idUsuario: number;
     @IsNotEmpty({ message: 'El campo nombres no puede estar vacío' })
     @IsString({ message: 'El campo nombres debe ser una cadena de texto' })
     nombres: string;

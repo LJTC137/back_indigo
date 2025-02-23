@@ -7,6 +7,8 @@ import {
 } from 'class-validator';
 
 export class CreateAdornoDto {
+  idAdorno: number;
+  
   @IsNotEmpty({ message: 'El campo descripción no puede estar vacío' })
   @IsString({
     message: 'El campo descripción solo puede ser una cadena de texto',

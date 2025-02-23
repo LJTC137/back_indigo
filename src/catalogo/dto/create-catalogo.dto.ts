@@ -1,6 +1,7 @@
 import { IsNotEmpty, IsString, MaxLength } from 'class-validator';
 
 export class CreateCatalogoDto {
+  idCatalogo: number;
   @IsNotEmpty({ message: 'El campo nombre de catalogo no puede estar vacío' })
   @MaxLength(13, {
     message:

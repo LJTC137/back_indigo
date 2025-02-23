@@ -7,6 +7,7 @@ import {
   } from 'class-validator';
   
   export class CreateColorDto {
+    idColor: number;
     @IsNotEmpty({ message: 'El campo nombre no puede estar vacío' })
     @IsString({ message: 'El campo nombre debe ser una cadena de texto' })
     @MaxLength(20, { message: 'El campo nombre no puede tener más de 20 caracteres' })

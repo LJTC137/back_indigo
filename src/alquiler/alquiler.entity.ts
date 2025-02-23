@@ -16,7 +16,6 @@ import {
   ManyToOne,
   OneToMany,
   PrimaryGeneratedColumn,
-  Timestamp,
 } from 'typeorm';
 
 @Entity({ name: 'alquiler' })
