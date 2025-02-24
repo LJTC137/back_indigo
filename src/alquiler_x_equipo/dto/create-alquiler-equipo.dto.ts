@@ -1,14 +1,14 @@
 import { IsNotEmpty } from 'class-validator';
 
 export class CreateAlquilerXEquipoDto {
-  idAlquilerXEquipo: number;
+  idReservaXEquipo: number;
   @IsNotEmpty({ message: 'AlquilerXEquipo falta el id alquiler' })
-  alquilerId;
+  reserva;
 
   @IsNotEmpty({
     message: 'El alquiler necesita un equipo de servicio registrado',
   })
-  equipoId;
+  equipo;
 
   @IsNotEmpty({ message: 'El campo no puede estar vacio' })
   horaXServicio: number;

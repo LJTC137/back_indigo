@@ -1,5 +1,5 @@
 import { AdornoEntity } from 'src/adorno/adorno.entity';
-import { AlquilerEntity } from 'src/alquiler/alquiler.entity';
+import { ReservaEntity } from 'src/alquiler/alquiler.entity';
 import {
   Column,
   Entity,
@@ -17,9 +17,9 @@ export class AdornoXAlquilerEntity {
   @JoinColumn({ name: 'idAdorno' })
   adorno: AdornoEntity;
 
-  @ManyToOne(() => AlquilerEntity, (alquiler) => alquiler, { nullable: false })
+  @ManyToOne(() => ReservaEntity, (alquiler) => alquiler, { nullable: false })
   @JoinColumn({ name: 'idAlquiler' })
-  alquiler: AlquilerEntity;
+  reserva: ReservaEntity;
 
   @Column({ nullable: false, type: 'character varying', length: '20' })
   color: string;

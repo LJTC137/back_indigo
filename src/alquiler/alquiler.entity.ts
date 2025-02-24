@@ -1,30 +1,33 @@
-import { AdornoXAlquilerEntity } from 'src/adorno_x_alquiler/adorno_x_alquiler.entity';
-import { AlquilerXEquipoEntity } from 'src/alquiler_x_equipo/alquiler_x_equipo.entity';
+import {
+  Entity,
+  Column,
+  PrimaryGeneratedColumn,
+  ManyToOne,
+  ManyToMany,
+  JoinColumn,
+  JoinTable,
+  OneToMany,
+} from 'typeorm';
 import { AsesorEntity } from 'src/asesor/asesor.entity';
 import { CatalogoEntity } from 'src/catalogo/catalogo.entity';
 import { CateringEntity } from 'src/catering/catering.entity';
 import { LocalEntity } from 'src/local/local.entity';
 import { MontajeEntity } from 'src/montaje/montaje.entity';
 import { ProductoTecnicoEntity } from 'src/producto_tecnico/producto_tecnico.entity';
-import { UsuarioEntity } from 'src/usuario/usuario.entity';
-import {
-  Column,
-  Entity,
-  JoinColumn,
-  JoinTable,
-  ManyToMany,
-  ManyToOne,
-  OneToMany,
-  PrimaryGeneratedColumn,
-} from 'typeorm';
 
-@Entity({ name: 'alquiler' })
-export class AlquilerEntity {
+@Entity({ name: 'reserva' })
+export class ReservaEntity {
   @PrimaryGeneratedColumn()
-  idAlquiler: number;
+  idReserva: number;
 
-  @Column({ nullable: false, type: 'date' })
-  fechaEvento: Date;
+  @Column({ nullable: false, type: 'varchar' })
+  nombreClienteReserva: string;
+
+  @Column({ nullable: false, type: 'varchar' })
+  identificacionClienteReserva: string;
+
+  @Column({ nullable: false, type: 'varchar' })
+  telefonoClienteReserva: string;
 
   @Column({ nullable: false, type: 'integer' })
   cantidadPersonas: number;
@@ -34,6 +37,55 @@ export class AlquilerEntity {
 
   @Column({ nullable: false, type: 'time' })
   horaFin: string;
+
+  @Column({ nullable: false, type: 'date' })
+  fechaInicioEvento: Date;
+
+  @Column({ nullable: false, type: 'date' })
+  fechaFinEvento: Date;
+
+  // Relación con asesor
+  @ManyToOne(() => AsesorEntity, { nullable: false })
+  @JoinColumn({ name: 'idAsesor' })
+  asesor: AsesorEntity;
+
+  // Relación con catálogo para tipo de evento
+  @ManyToOne(() => CatalogoEntity, { nullable: false })
+  @JoinColumn({ name: 'tipoEvento' })
+  tipoEvento: CatalogoEntity;
+
+  // Relación con catálogo para estado de reserva
+  @ManyToOne(() => CatalogoEntity, { nullable: false })
+  @JoinColumn({ name: 'estadoReserva' })
+  estadoReserva: CatalogoEntity;
+
+  // Relación ManyToMany con catering
+  @ManyToMany(() => CateringEntity, { eager: true })
+  @JoinTable({
+    name: 'reserva_catering',
+    joinColumn: { name: 'idReserva' },
+    inverseJoinColumn: { name: 'idCatering' },
+  })
+  reservaCatering: CateringEntity[];
+
+  // Relación con local
+  @ManyToOne(() => LocalEntity, { nullable: false })
+  @JoinColumn({ name: 'idLocal' })
+  local: LocalEntity;
+
+  // Relación con montaje
+  @ManyToOne(() => MontajeEntity, { nullable: false })
+  @JoinColumn({ name: 'idMontaje' })
+  montaje: MontajeEntity;
+
+  // Relación ManyToMany con producto tecnológico
+  @ManyToMany(() => ProductoTecnicoEntity, { eager: true })
+  @JoinTable({
+    name: 'reserva_producto',
+    joinColumn: { name: 'idReserva' },
+    inverseJoinColumn: { name: 'idProducto' },
+  })
+  reservaProducto: ProductoTecnicoEntity[];
 
   @Column({ nullable: false, type: 'date', default: () => 'CURRENT_DATE' })
   fechaRegistro: Date;
@@ -59,89 +111,7 @@ export class AlquilerEntity {
   @Column({ nullable: false, type: 'boolean', default: true })
   estado: boolean;
 
-  //==================== Foreign keys
-  //========== Adorno
-  @OneToMany(
-    () => AdornoXAlquilerEntity,
-    (alquilerAdorno) => alquilerAdorno.alquiler,
-  )
-  alquilerAdorno: AdornoXAlquilerEntity[];
-
-  //========== Asesor
-  @ManyToOne(() => AsesorEntity, (asesor) => asesor.asesorAlquiler, {
-    nullable: false,
-  })
-  @JoinColumn({ name: 'idAsesor' })
-  asesor: AsesorEntity;
-
-  //========== Catalogo
-  @ManyToOne(
-    () => CatalogoEntity,
-    (catalogo) => catalogo.catalogoEstadoAlquiler,
-    { nullable: false },
-  )
-  @JoinColumn({ name: 'estadoAlquiler' })
-  estadoAlquiler: CatalogoEntity;
-
-  @ManyToOne(
-    () => CatalogoEntity,
-    (catalogo) => catalogo.catalogoTipoAlquiler,
-    { nullable: false },
-  )
-  @JoinColumn({ name: 'tipoEvento' })
-  tipoEvento: CatalogoEntity;
-
-  //========== Catering
-  @ManyToMany(() => CateringEntity, (catering) => catering.cateringAlquiler, {
-    eager: true,
-  })
-  @JoinTable({
-    name: 'alquiler_catering',
-    joinColumn: { name: 'idAlquiler' },
-    inverseJoinColumn: { name: 'idCatering' },
-  })
-  alquilerCatering: CateringEntity[];
-
-  //========== Equipo servicio
-  @OneToMany(
-    () => AlquilerXEquipoEntity,
-    (alquilerEquipo) => alquilerEquipo.alquiler,
-  )
-  alquilerEquipo: AlquilerXEquipoEntity[];
-
-  //========== Local
-  @ManyToOne(() => LocalEntity, (local) => local.localAlquiler, {
-    nullable: false,
-  })
-  @JoinColumn({ name: 'idLocal' })
-  local: LocalEntity;
-
-  //========== Montaje
-  @ManyToOne(() => MontajeEntity, (montaje) => montaje.montajeAlquiler, {
-    nullable: false,
-  })
-  @JoinColumn({ name: 'idMontaje' })
-  montaje: MontajeEntity;
-
-  //========== Productos tecnicos
-  @ManyToMany(
-    () => ProductoTecnicoEntity,
-    (producto) => producto.productoAlquiler,
-    {
-      eager: true,
-    },
-  )
-  @JoinTable({
-    name: 'alquiler_producto',
-    joinColumn: { name: 'idAlquiler' },
-    inverseJoinColumn: { name: 'idProducto' },
-  })
-  alquilerProducto: ProductoTecnicoEntity[];
-
-  //========== usuario
-  @ManyToOne(() => UsuarioEntity, (usuario) => usuario.usuarioAlquiler, {
-    nullable: false,
-  })
-  @JoinColumn({ name: 'idUsuario' })
-  usuario: UsuarioEntity;
+  //======= Foreign key
+  @OneToMany(() => ReservaEntity, (alquiler) => alquiler.asesor)
+  alquilerEquipo: ReservaEntity[];
 }

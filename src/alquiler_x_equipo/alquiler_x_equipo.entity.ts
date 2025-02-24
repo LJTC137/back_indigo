@@ -1,4 +1,4 @@
-import { AlquilerEntity } from 'src/alquiler/alquiler.entity';
+import { ReservaEntity } from 'src/alquiler/alquiler.entity';
 import { EquipoServicioEntity } from 'src/equipo_servicio/equipo_servicio.entity';
 import {
   Column,
@@ -11,13 +11,13 @@ import {
 @Entity({ name: 'alquiler_equipo' })
 export class AlquilerXEquipoEntity {
   @PrimaryGeneratedColumn()
-  idAlquilerXEquipo: number;
+  idReservaXEquipo: number;
 
-  @ManyToOne(() => AlquilerEntity, (alquiler) => alquiler.alquilerEquipo, {
+  @ManyToOne(() => ReservaEntity, (alquiler) => alquiler.alquilerEquipo, {
     nullable: false,
   })
-  @JoinColumn({ name: 'idAlquiler' })
-  alquiler: AlquilerEntity;
+  @JoinColumn({ name: 'idReserva' })
+  reserva: ReservaEntity;
 
   @ManyToOne(
     () => EquipoServicioEntity,

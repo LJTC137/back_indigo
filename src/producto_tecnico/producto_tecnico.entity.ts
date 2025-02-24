@@ -1,4 +1,4 @@
-import { AlquilerEntity } from 'src/alquiler/alquiler.entity';
+import { ReservaEntity } from 'src/alquiler/alquiler.entity';
 import { CatalogoEntity } from 'src/catalogo/catalogo.entity';
 import {
   Column,
@@ -111,8 +111,8 @@ export class ProductoTecnicoEntity {
    * Relación muchos a muchos con la entidad Alquiler.
    * Representa los alquileres asociados al producto técnico.
    */
-  @ManyToMany(() => AlquilerEntity, (alquiler) => alquiler.alquilerProducto)
-  productoAlquiler: AlquilerEntity[];
+  @ManyToMany(() => ReservaEntity, (alquiler) => alquiler.reservaProducto)
+  productoAlquiler: ReservaEntity[];
 
   /**
    * Foreign key tipo integer de la tabla catálogo para el estado del producto:

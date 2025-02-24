@@ -1,4 +1,4 @@
-import { AlquilerEntity } from 'src/alquiler/alquiler.entity';
+import { ReservaEntity } from 'src/alquiler/alquiler.entity';
 import { CatalogoEntity } from 'src/catalogo/catalogo.entity';
 import {
   Column,
@@ -145,6 +145,6 @@ export class LocalEntity {
    * Relación uno a muchos con la entidad Alquiler.
    * Un local puede tener varios alquileres asociados.
    */
-  @OneToMany(() => AlquilerEntity, (alquiler) => alquiler.local)
-  localAlquiler: AlquilerEntity[];
+  @OneToMany(() => ReservaEntity, (alquiler) => alquiler.local)
+  localAlquiler: ReservaEntity[];
 }

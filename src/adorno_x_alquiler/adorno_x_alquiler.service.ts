@@ -30,10 +30,10 @@ export class AdornoXAlquilerService {
   }
 
   // ======= Listar AdornoXAlquiler por id alquiler
-  async getByAlquilerId(idAlquiler: number): Promise<AdornoXAlquilerEntity[]> {
+  async getByAlquilerId(idReserva: number): Promise<AdornoXAlquilerEntity[]> {
     try {
       const adornos = await this.adornoXAlquilerRepository.find({
-        where: { alquiler: { idAlquiler } },
+        where: { reserva: { idReserva } },
       });
 
       if (!adornos || adornos.length === 0) {

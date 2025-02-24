@@ -1,4 +1,4 @@
-import { AlquilerEntity } from 'src/alquiler/alquiler.entity';
+import { ReservaEntity } from 'src/alquiler/alquiler.entity';
 import { CatalogoEntity } from 'src/catalogo/catalogo.entity';
 import {
   Column,
@@ -28,8 +28,8 @@ export class CateringEntity {
 
   //============== Foreign key
   //======= Alquiler
-  @ManyToMany(() => AlquilerEntity, (alquiler) => alquiler.alquilerCatering)
-  cateringAlquiler: AlquilerEntity[];
+  @ManyToMany(() => ReservaEntity, (alquiler) => alquiler.reservaCatering)
+  cateringAlquiler: ReservaEntity[];
 
   //======= Catalogo
   @ManyToOne(

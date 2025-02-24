@@ -9,7 +9,7 @@ import {
   ParseIntPipe,
 } from '@nestjs/common';
 import { AlquilerService } from './alquiler.service';
-import { CreateAlquilerDto } from './dto/create-alquiler.dto';
+import { CreateReservaDto } from './dto/create-alquiler.dto';
 import { UpdateAlquilerDto } from './dto/update-alquiler.dto';
 
 @Controller('reserva')
@@ -30,8 +30,8 @@ export class AlquilerController {
 
   // ======== Crear un alquiler
   @Post()
-  async create(@Body() createAlquilerDto: CreateAlquilerDto) {
-    return await this.alquilerService.create(createAlquilerDto);
+  async create(@Body() CreateReservaDto: CreateReservaDto) {
+    return await this.alquilerService.create(CreateReservaDto);
   }
 
   // ======== Actualizar un alquiler

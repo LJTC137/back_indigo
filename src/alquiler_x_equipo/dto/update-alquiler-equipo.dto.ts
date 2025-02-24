@@ -1,7 +1,7 @@
 export class UpdateAlquilerXEquipoDto{
-    idAlquilerXEquipo: number;
-    alquilerId?;
-    equipoId?;
+    idReservaXEquipo: number;
+    reserva?;
+    equipo?;
 
     horaXServicio?: number;
 }

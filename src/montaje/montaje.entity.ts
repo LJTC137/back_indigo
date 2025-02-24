@@ -1,4 +1,4 @@
-import { AlquilerEntity } from 'src/alquiler/alquiler.entity';
+import { ReservaEntity } from 'src/alquiler/alquiler.entity';
 import { CatalogoEntity } from 'src/catalogo/catalogo.entity';
 import {
   Column,
@@ -132,8 +132,8 @@ export class MontajeEntity {
    * Relación uno a muchos con la entidad Alquiler.
    * Un montaje puede estar asociado a varios alquileres.
    */
-  @OneToMany(() => AlquilerEntity, (alquiler) => alquiler.montaje)
-  montajeAlquiler: AlquilerEntity[];
+  @OneToMany(() => ReservaEntity, (alquiler) => alquiler.montaje)
+  montajeAlquiler: ReservaEntity[];
 
   /**
    * Foreign key de la tabla catálogo para el tipo de cobro (por evento, por horas).

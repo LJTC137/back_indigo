@@ -1,22 +1,31 @@
 import { BadRequestException, Injectable, HttpStatus } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { AlquilerEntity } from './alquiler.entity';
+import { ReservaEntity } from './alquiler.entity';
 import { Repository } from 'typeorm';
 import { MessageDto } from 'src/common/message.dto';
-import { CreateAlquilerDto } from './dto/create-alquiler.dto';
+import { CreateReservaDto } from './dto/create-alquiler.dto';
 import { UpdateAlquilerDto } from './dto/update-alquiler.dto';
 
 @Injectable()
 export class AlquilerService {
   constructor(
-    @InjectRepository(AlquilerEntity)
-    private readonly alquilerRepository: Repository<AlquilerEntity>,
+    @InjectRepository(ReservaEntity)
+    private readonly alquilerRepository: Repository<ReservaEntity>,
   ) {}
 
   // ======= Listar todos los alquileres
-  async getList(): Promise<AlquilerEntity[]> {
+  async getList(): Promise<ReservaEntity[]> {
     try {
-      return await this.alquilerRepository.find({ where: { estado: true } });
+      return await this.alquilerRepository.find({
+        where: { estado: true },
+        relations: [
+          'local',
+          'asesor',
+          'tipoEvento',
+          'estadoReserva',
+          'montaje',
+        ],
+      });
     } catch (error) {
       throw new BadRequestException(
         new MessageDto(
@@ -30,10 +39,10 @@ export class AlquilerService {
   }
 
   // ======= Obtener alquiler por ID
-  async getById(idAlquiler: number): Promise<AlquilerEntity> {
+  async getById(idReserva: number): Promise<ReservaEntity> {
     try {
       const alquiler = await this.alquilerRepository.findOne({
-        where: { idAlquiler, estado: true },
+        where: { idReserva, estado: true },
       });
 
       if (!alquiler) {
@@ -61,7 +70,7 @@ export class AlquilerService {
   }
 
   // ======== Crear un nuevo alquiler
-  async create(createAlquilerDto: CreateAlquilerDto): Promise<MessageDto> {
+  async create(createAlquilerDto: CreateReservaDto): Promise<MessageDto> {
     try {
       const alquiler = this.alquilerRepository.create(createAlquilerDto);
       const savedAlquiler = await this.alquilerRepository.save(alquiler);
@@ -70,9 +79,11 @@ export class AlquilerService {
         'Alquiler registrado correctamente',
         'success',
         HttpStatus.CREATED,
-        savedAlquiler.idAlquiler,
+        savedAlquiler.idReserva,
       );
     } catch (error) {
+      console.log(error);
+
       throw new BadRequestException(
         new MessageDto(
           'Error al registrar el alquiler',
@@ -86,12 +97,12 @@ export class AlquilerService {
 
   // ======== Actualizar un alquiler existente
   async update(
-    idAlquiler: number,
+    idReserva: number,
     updateAlquilerDto: UpdateAlquilerDto,
   ): Promise<MessageDto> {
     try {
       const alquiler = await this.alquilerRepository.findOne({
-        where: { idAlquiler },
+        where: { idReserva },
       });
 
       if (!alquiler) {
@@ -105,13 +116,13 @@ export class AlquilerService {
         );
       }
 
-      await this.alquilerRepository.update(idAlquiler, updateAlquilerDto);
+      await this.alquilerRepository.update(idReserva, updateAlquilerDto);
 
       return new MessageDto(
         'Alquiler actualizado correctamente',
         'success',
         HttpStatus.OK,
-        idAlquiler,
+        idReserva,
       );
     } catch (error) {
       throw new BadRequestException(
@@ -126,10 +137,10 @@ export class AlquilerService {
   }
 
   // ======== Eliminar un alquiler (cambio de estado en lugar de borrado físico)
-  async delete(idAlquiler: number): Promise<MessageDto> {
+  async delete(idReserva: number): Promise<MessageDto> {
     try {
       const alquiler = await this.alquilerRepository.findOne({
-        where: { idAlquiler },
+        where: { idReserva },
       });
 
       if (!alquiler) {
@@ -143,13 +154,13 @@ export class AlquilerService {
         );
       }
 
-      await this.alquilerRepository.update(idAlquiler, { estado: false });
+      await this.alquilerRepository.update(idReserva, { estado: false });
 
       return new MessageDto(
         'Alquiler eliminado correctamente',
         'success',
         HttpStatus.OK,
-        idAlquiler,
+        idReserva,
       );
     } catch (error) {
       throw new BadRequestException(

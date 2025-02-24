@@ -4,14 +4,14 @@ import { AdornoXAlquilerController } from './adorno_x_alquiler.controller';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { AdornoEntity } from 'src/adorno/adorno.entity';
 import { AdornoXAlquilerEntity } from './adorno_x_alquiler.entity';
-import { AlquilerEntity } from 'src/alquiler/alquiler.entity';
+import { ReservaEntity } from 'src/alquiler/alquiler.entity';
 
 @Module({
   imports: [
     TypeOrmModule.forFeature([
       AdornoEntity,
       AdornoXAlquilerEntity,
-      AlquilerEntity,
+      ReservaEntity,
     ]),
   ],
   providers: [AdornoXAlquilerService],

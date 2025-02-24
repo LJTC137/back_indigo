@@ -3,10 +3,10 @@ import { IsNotEmpty, IsNumber, IsString, MaxLength } from 'class-validator';
 export class CreateAdornoXAlquilerDto {
   idAdornoXAlquiler: number;
   @IsNotEmpty({ message: 'El alquiler necesita un adorno registrado' })
-  adornoId;
+  adorno;
 
   @IsNotEmpty({ message: 'AlquilerXAdorno falta id alquiler' })
-  alquilerId;
+  reserva;
 
   @IsNotEmpty({ message: 'El campo color no puede estar vacio' })
   @IsString({ message: 'El campo de color solo puede ser una cadena de texto' })

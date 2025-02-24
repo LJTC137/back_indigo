@@ -1,5 +1,5 @@
 import { AdornoEntity } from 'src/adorno/adorno.entity';
-import { AlquilerEntity } from 'src/alquiler/alquiler.entity';
+import { ReservaEntity } from 'src/alquiler/alquiler.entity';
 import { CateringEntity } from 'src/catering/catering.entity';
 import { EquipoServicioEntity } from 'src/equipo_servicio/equipo_servicio.entity';
 import { LocalEntity } from 'src/local/local.entity';
@@ -26,11 +26,11 @@ export class CatalogoEntity {
   catalogoTipoAdorno: AdornoEntity[];
 
   //==========Alquiler
-  @OneToMany(() => AlquilerEntity, (alquiler) => alquiler.estadoAlquiler)
-  catalogoEstadoAlquiler: AlquilerEntity[];
+  @OneToMany(() => ReservaEntity, (alquiler) => alquiler.estadoReserva)
+  catalogoEstadoAlquiler: ReservaEntity[];
 
-  @OneToMany(() => AlquilerEntity, (alquiler) => alquiler.tipoEvento)
-  catalogoTipoAlquiler: AlquilerEntity[];
+  @OneToMany(() => ReservaEntity, (alquiler) => alquiler.tipoEvento)
+  catalogoTipoAlquiler: ReservaEntity[];
 
   //==========Catering
   @OneToMany(() => CateringEntity, (catering) => catering.tipoCatering)

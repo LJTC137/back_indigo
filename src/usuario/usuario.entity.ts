@@ -1,5 +1,4 @@
 import { hash } from 'bcryptjs';
-import { AlquilerEntity } from 'src/alquiler/alquiler.entity';
 import { TipoUsuarioEntity } from 'src/tipo_usuario/tipo_usuario.entity';
 import {
   BeforeInsert,
@@ -85,14 +84,6 @@ export class UsuarioEntity {
   estado: boolean;
 
   // Relaciones
-
-  /**
-   * Relación uno a muchos con la entidad Alquiler.
-   * Un usuario puede tener varios registros de alquiler.
-   */
-  @OneToMany(() => AlquilerEntity, (alquiler) => alquiler.usuario)
-  usuarioAlquiler: AlquilerEntity[];
-
   /**
    * Relación muchos a muchos con la entidad TipoUsuario.
    * Se utiliza la tabla intermedia "usuario_tipoUsuario" para asociar roles a los usuarios.

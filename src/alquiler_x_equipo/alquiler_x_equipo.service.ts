@@ -30,10 +30,10 @@ export class AlquilerXEquipoService {
   }
 
   // ======= Listar alquilerXEquipo por id de alquiler
-  async getByAlquilerId(idAlquiler: number): Promise<AlquilerXEquipoEntity[]> {
+  async getByAlquilerId(idReserva: number): Promise<AlquilerXEquipoEntity[]> {
     try {
       const equipos = await this.alquilerXEquipoRepository.find({
-        where: { alquiler: { idAlquiler } },
+        where: { reserva: { idReserva } },
       });
 
       if (!equipos || equipos.length === 0) {
@@ -75,7 +75,7 @@ export class AlquilerXEquipoService {
         'Equipo de servicio registrado correctamente',
         'success',
         HttpStatus.CREATED,
-        savedAlquilerXEquipo.idAlquilerXEquipo,
+        savedAlquilerXEquipo.idReservaXEquipo,
       );
     } catch (error) {
       throw new BadRequestException(
@@ -91,12 +91,12 @@ export class AlquilerXEquipoService {
 
   // ======== Actualizar alquilerXEquipo
   async update(
-    idAlquilerXEquipo: number,
+    idReservaXEquipo: number,
     updateAlquilerXEquipoDto: UpdateAlquilerXEquipoDto,
   ): Promise<MessageDto> {
     try {
       const alquilerXEquipo = await this.alquilerXEquipoRepository.findOne({
-        where: { idAlquilerXEquipo },
+        where: { idReservaXEquipo },
       });
 
       if (!alquilerXEquipo) {
@@ -111,7 +111,7 @@ export class AlquilerXEquipoService {
       }
 
       await this.alquilerXEquipoRepository.update(
-        idAlquilerXEquipo,
+        idReservaXEquipo,
         updateAlquilerXEquipoDto,
       );
 
@@ -119,7 +119,7 @@ export class AlquilerXEquipoService {
         'Equipo de servicio actualizado correctamente',
         'success',
         HttpStatus.OK,
-        idAlquilerXEquipo,
+        idReservaXEquipo,
       );
     } catch (error) {
       throw new BadRequestException(
@@ -134,10 +134,10 @@ export class AlquilerXEquipoService {
   }
 
   // ======== Eliminar alquilerXEquipo
-  async delete(idAlquilerXEquipo: number): Promise<MessageDto> {
+  async delete(idReservaXEquipo: number): Promise<MessageDto> {
     try {
       const alquilerXEquipo = await this.alquilerXEquipoRepository.findOne({
-        where: { idAlquilerXEquipo },
+        where: { idReservaXEquipo },
       });
 
       if (!alquilerXEquipo) {
@@ -151,13 +151,13 @@ export class AlquilerXEquipoService {
         );
       }
 
-      await this.alquilerXEquipoRepository.delete(idAlquilerXEquipo);
+      await this.alquilerXEquipoRepository.delete(idReservaXEquipo);
 
       return new MessageDto(
         'Equipo de servicio eliminado correctamente',
         'success',
         HttpStatus.OK,
-        idAlquilerXEquipo,
+        idReservaXEquipo,
       );
     } catch (error) {
       throw new BadRequestException(
