@@ -19,6 +19,9 @@ export class UpdateAlquilerDto{
 
     @IsNumber({ allowNaN: false, maxDecimalPlaces: 0 })
     cantidadMesas?: number;
+
+    @IsNumber({}, { message: 'La cantidad de mesas y sillas debe ser un número' })
+    cantidadPack?: number;
     
     @IsNumber({ allowNaN: false, maxDecimalPlaces: 0 })
     costoServicio?: number;

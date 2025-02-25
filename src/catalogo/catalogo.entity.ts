@@ -7,18 +7,40 @@ import { MontajeEntity } from 'src/montaje/montaje.entity';
 import { ProductoTecnicoEntity } from 'src/producto_tecnico/producto_tecnico.entity';
 import { Column, Entity, OneToMany, PrimaryGeneratedColumn } from 'typeorm';
 
-@Entity({ name: 'catalogo' })
+@Entity({
+  name: 'catalogo',
+  comment:
+    'Tabla que almacena los distintos tipos de catálogos utilizados en el sistema.',
+})
 export class CatalogoEntity {
-  @PrimaryGeneratedColumn()
+  @PrimaryGeneratedColumn({
+    comment: 'Primary key tipo serial para el catálogo.',
+  })
   idCatalogo: number;
 
-  @Column({ nullable: false, type: 'character varying', length: '70' })
+  @Column({
+    nullable: false,
+    type: 'character varying',
+    length: '70',
+    comment:
+      'Nombre del catálogo, representa una categoría de datos en el sistema.',
+  })
   nombreCatalogo: string;
 
-  @Column({ nullable: false, type: 'character varying', length: '70' })
+  @Column({
+    nullable: false,
+    type: 'character varying',
+    length: '70',
+    comment: 'Valor específico dentro de la categoría de catálogo.',
+  })
   valorCatalogo: string;
 
-  @Column({ default: true, nullable: false, type: 'boolean' })
+  @Column({
+    default: true,
+    nullable: false,
+    type: 'boolean',
+    comment: 'Indica si el catálogo está activo o inactivo en el sistema.',
+  })
   estado: boolean;
 
   //==========Adornos

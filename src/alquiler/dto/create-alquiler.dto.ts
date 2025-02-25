@@ -32,13 +32,14 @@ export class CreateReservaDto {
   // fechaRegistro se asigna por defecto
   fechaRegistro?: Date;
 
-  @IsNotEmpty({ message: 'La cantidad de sillas es obligatoria' })
   @IsNumber({}, { message: 'La cantidad de sillas debe ser un número' })
   cantidadSillas: number;
 
-  @IsNotEmpty({ message: 'La cantidad de mesas es obligatoria' })
   @IsNumber({}, { message: 'La cantidad de mesas debe ser un número' })
   cantidadMesas: number;
+
+  @IsNumber({}, { message: 'La cantidad de mesas y sillas debe ser un número' })
+  cantidadPack: number;
 
   @IsNotEmpty({ message: 'El costo del montaje es obligatorio' })
   @IsNumber({}, { message: 'El costo del montaje debe ser un número' })

@@ -24,6 +24,8 @@ export class AlquilerService {
           'tipoEvento',
           'estadoReserva',
           'montaje',
+          'alquilerEquipo',
+          'alquilerAdorno',
         ],
       });
     } catch (error) {

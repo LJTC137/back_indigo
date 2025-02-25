@@ -9,29 +9,56 @@ import {
   PrimaryGeneratedColumn,
 } from 'typeorm';
 
-@Entity({ name: 'catering' })
+@Entity({
+  name: 'catering',
+  comment:
+    'Tabla que almacena los servicios de catering disponibles para las reservas.',
+})
 export class CateringEntity {
-  @PrimaryGeneratedColumn()
+  @PrimaryGeneratedColumn({
+    comment:
+      'Primary key tipo serial para identificar un servicio de catering.',
+  })
   idCatering: number;
 
-  @Column({ nullable: false, type: 'character varying', length: '50' })
+  @Column({
+    nullable: false,
+    type: 'character varying',
+    length: '50',
+    comment: 'Nombre del servicio de catering.',
+  })
   nombreServicio: string;
 
-  @Column({ nullable: false, type: 'character varying', length: '250' })
+  @Column({
+    nullable: false,
+    type: 'character varying',
+    length: '250',
+    comment: 'Descripción detallada del servicio de catering.',
+  })
   descripcion: string;
 
-  @Column({ nullable: false, type: 'double precision' })
+  @Column({
+    nullable: false,
+    type: 'double precision',
+    comment: 'Precio por persona del servicio de catering.',
+  })
   precioXPersona: number;
 
-  @Column({ nullable: false, type: 'boolean', default: true })
+  @Column({
+    nullable: false,
+    type: 'boolean',
+    default: true,
+    comment: 'Indica si el servicio de catering está activo o inactivo.',
+  })
   estado: boolean;
 
-  //============== Foreign key
-  //======= Alquiler
-  @ManyToMany(() => ReservaEntity, (alquiler) => alquiler.reservaCatering)
+  //======= Relaciones con otras entidades
+
+  // Relación ManyToMany con reserva
+  @ManyToMany(() => ReservaEntity, (alquiler) => alquiler.reservaCatering, {})
   cateringAlquiler: ReservaEntity[];
 
-  //======= Catalogo
+  // Relación ManyToOne con catálogo para tipo de catering
   @ManyToOne(
     () => CatalogoEntity,
     (catalogo) => catalogo.catalogoTipoCatering,
