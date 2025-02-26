@@ -31,7 +31,7 @@ import {
     @IsBoolean({ message: 'El campo disponibilidad solo puede ser un valor de verdadero o falso' })
     esDisponible?: boolean;
   
-    tipoContratacionId;
-    tipoEquipoId;
+    tipoContratacion;
+    tipoEquipo;
 }
   

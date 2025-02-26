@@ -5,6 +5,8 @@ import { Repository } from 'typeorm';
 import { MessageDto } from 'src/common/message.dto';
 import { CreateReservaDto } from './dto/create-alquiler.dto';
 import { UpdateAlquilerDto } from './dto/update-alquiler.dto';
+import { AlquilerXEquipoEntity } from 'src/alquiler_x_equipo/alquiler_x_equipo.entity';
+import { AdornoXAlquilerEntity } from 'src/adorno_x_alquiler/adorno_x_alquiler.entity';
 
 @Injectable()
 export class AlquilerService {
@@ -20,15 +22,30 @@ export class AlquilerService {
         where: { estado: true },
         relations: [
           'local',
+          'local.tipoLocal',
           'asesor',
           'tipoEvento',
           'estadoReserva',
+          'reservaProducto',
+          'reservaProducto.tipoProducto',
+          'reservaCatering',
+          'reservaCatering.tipoCatering',
           'montaje',
+          'montaje.tipoMontaje',
+          'montaje.tipoCobro',
           'alquilerEquipo',
+          'alquilerEquipo.equipo',
+          'alquilerEquipo.equipo.tipoEquipo',
+          'alquilerEquipo.equipo.tipoContratacion',
           'alquilerAdorno',
+          'alquilerAdorno.adorno',
+          'alquilerAdorno.adorno.tipoAdorno',
+          'alquilerAdorno.reserva',
         ],
       });
     } catch (error) {
+      console.log(error);
+
       throw new BadRequestException(
         new MessageDto(
           'Error al obtener la lista de alquileres',

@@ -1,40 +1,85 @@
-import { IsBoolean, IsNumber } from "class-validator";
+import { IsBoolean, IsNotEmpty, IsNumber } from 'class-validator';
 
-export class UpdateAlquilerDto{
-    idAlquiler: number;
-    
-    fechaEvento?: Date;
+export class UpdateAlquilerDto {
+  // idReserva se genera automáticamente, por lo que es opcional
+  idReserva?: number;
 
-    @IsNumber({ allowNaN: false, maxDecimalPlaces: 0 })
-    cantidadPersonas?: number;
+  @IsNotEmpty({ message: 'El nombre del cliente es obligatorio' })
+  nombreClienteReserva: string;
 
-    horaInicio?: string;
+  @IsNotEmpty({ message: 'La identificación del cliente es obligatoria' })
+  identificacionClienteReserva: string;
 
-    horaFin?: string;
+  @IsNotEmpty({ message: 'El teléfono del cliente es obligatorio' })
+  telefonoClienteReserva: string;
 
-    fechaRegistro?: Date;
+  @IsNotEmpty({ message: 'La fecha de inicio del evento es obligatoria' })
+  fechaInicioEvento: Date;
 
-    @IsNumber({ allowNaN: false, maxDecimalPlaces: 0 })
-    cantidadSillas?: number;
+  @IsNotEmpty({ message: 'La fecha de fin del evento es obligatoria' })
+  fechaFinEvento: Date;
 
-    @IsNumber({ allowNaN: false, maxDecimalPlaces: 0 })
-    cantidadMesas?: number;
+  @IsNotEmpty({ message: 'La cantidad de personas es obligatoria' })
+  @IsNumber({}, { message: 'La cantidad de personas debe ser un número' })
+  cantidadPersonas: number;
 
-    @IsNumber({}, { message: 'La cantidad de mesas y sillas debe ser un número' })
-    cantidadPack?: number;
-    
-    @IsNumber({ allowNaN: false, maxDecimalPlaces: 0 })
-    costoServicio?: number;
+  @IsNotEmpty({ message: 'La hora de inicio es obligatoria' })
+  horaInicio: string;
 
-    @IsNumber({ allowNaN: false, maxDecimalPlaces: 0 })
-    costoTotal?: number;
-    
-    @IsBoolean({ message: 'El campo estado solo puede ser un valor de si o no' })
-    estado?: boolean;
-    
-    asesor?;
-    estadoAlquiler?;
-    tipoEvento?;
-    local?;
-    montaje?;
+  @IsNotEmpty({ message: 'La hora de fin es obligatoria' })
+  horaFin: string;
+
+  // fechaRegistro se asigna por defecto
+  fechaRegistro?: Date;
+
+  @IsNumber({}, { message: 'La cantidad de sillas debe ser un número' })
+  cantidadSillas: number;
+
+  @IsNumber({}, { message: 'La cantidad de mesas debe ser un número' })
+  cantidadMesas: number;
+
+  @IsNumber({}, { message: 'La cantidad de mesas y sillas debe ser un número' })
+  cantidadPack: number;
+
+  @IsNotEmpty({ message: 'El costo del montaje es obligatorio' })
+  @IsNumber({}, { message: 'El costo del montaje debe ser un número' })
+  costoMontaje: number;
+
+  @IsNotEmpty({ message: 'El costo de adornos es obligatorio' })
+  @IsNumber({}, { message: 'El costo de adornos debe ser un número' })
+  costoAdornos: number;
+
+  @IsNotEmpty({ message: 'El costo del servicio es obligatorio' })
+  @IsNumber({}, { message: 'El costo del servicio debe ser un número' })
+  costoServicio: number;
+
+  @IsNotEmpty({ message: 'El costo total es obligatorio' })
+  @IsNumber({}, { message: 'El costo total debe ser un número' })
+  costoTotal: number;
+
+  @IsNotEmpty({ message: 'El estado es obligatorio' })
+  @IsBoolean({ message: 'El estado debe ser un valor booleano' })
+  estado: boolean;
+
+  @IsNotEmpty({ message: 'La reserva necesita un asesor registrado' })
+  asesor: any; // Aquí puedes especificar el tipo correspondiente (por ejemplo, AsesorEntity o un id)
+
+  @IsNotEmpty({ message: 'La reserva necesita un estado registrado' })
+  estadoReserva: any; // Similar, el tipo que corresponda
+
+  @IsNotEmpty({ message: 'La reserva necesita un tipo de evento registrado' })
+  tipoEvento: any;
+
+  @IsNotEmpty({ message: 'La reserva necesita un local registrado' })
+  local: any;
+
+  @IsNotEmpty({ message: 'El montaje es obligatorio' })
+  montaje: any;
+
+  // Estos campos son relaciones ManyToMany y se pueden enviar como arreglo de identificadores o de objetos
+  reservaCatering: any[];
+  reservaProducto: any[];
+
+  alquilerEquipo;
+  alquilerAdorno;
 }

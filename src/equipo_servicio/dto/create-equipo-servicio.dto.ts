@@ -36,9 +36,9 @@ import {
     esDisponible: boolean;
 
     @IsNotEmpty({ message: 'El equipo de servicio necesita un tipo de contratación registrado' })
-    tipoContratacionId;
+    tipoContratacion;
 
     @IsNotEmpty({ message: 'El equipo de servicio necesita un tipo de equipo de servicio registrado' })
-    tipoEquipoId;
+    tipoEquipo;
   }
   
